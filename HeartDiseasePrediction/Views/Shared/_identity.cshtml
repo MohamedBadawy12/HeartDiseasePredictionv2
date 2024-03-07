@@ -1,0 +1,69 @@
+﻿@using Database.Entities;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity
+@*@inject SignInManager<ApplicationUser> SignInManager*@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAcc
+
+@if (httpAcc.HttpContext.Session.GetString("JWToken") != null &&
+	httpAcc.HttpContext.Session.GetString("JWToken").ToString().Length > 0)@*string.IsNullOrWhiteSpace(HttpContextAccessor.HttpContext.Session.GetString("JWToken"))*@
+{
+
+	<div class="nav-item dropdown">
+		<button class="nav-link btn btn-outline-info dropdown-toggle "
+				id="navbarDropdown" role="button"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			@*<img src="~/images/doctor.png"
+		class="rounded-circle"
+		height="22"
+		alt="Portrait of a User"
+		loading="lazy" />*@ @ViewBag.UserName
+		</button>
+		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+			<a class="dropdown-item" asp-controller="Doctor" asp-action="DoctorProfile">
+				<i class="fa fa-user"> </i>  Profile
+			</a>
+			@*<div class="dropdown-divider"></div>*@
+			@*<a class="dropdown-item btn-outline-danger" asp-controller="Account" asp-action="LogOut" onclick="ConfirmLogout()">
+		<i class="fa fa-sign-out" aria-hidden="true"></i>
+		<span>
+		Log Out
+		</span>
+		</a>*@
+		</div>
+	</div>
+	<span style="padding-left:10px"></span>
+	<a asp-controller="Account" asp-action="Logout" onclick="ConfirmLogout()">
+		<i class="fa fa-sign-out" aria-hidden="true"></i>
+		<span>
+			Log Out
+		</span>
+	</a>
+	
+}
+else
+{
+	<a asp-controller="Account" asp-action="Login">
+		<i class="fa fa-sign-in" aria-hidden="true"></i>
+		<span>
+			Login
+		</span>
+	</a>
+	<a asp-controller="Account" asp-action="RegisterOfUser">
+		<i class="fa fa-user" aria-hidden="true"></i>
+		<span>
+			Sign Up
+		</span>
+	</a>
+
+}
+
+<script>
+	function ConfirmLogout() {
+		document.getElementsByClassName("");
+		var accept = confirm("Are You Sure to Log Out?");
+		if (accept == false) {
+			event.preventDefault();
+		}
+	}
+</script>

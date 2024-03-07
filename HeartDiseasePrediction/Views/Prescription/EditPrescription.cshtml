@@ -1,0 +1,49 @@
+﻿@model Database.Entities.Prescription
+
+@{
+    ViewData["Title"] = "Prescription Update Page";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<section class="book_section layout_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form asp-action="EditPrescription">
+                    <h4>
+                        Update <span>Prescription</span>
+                    </h4>
+                    <div class="form-row ">
+                        <div class="form-group col-lg-4">
+                            <label asp-for="@Model.PatientSSN" class="control-label"></label>
+                            <input asp-for="@Model.PatientSSN" type="text" class="form-control" id="inputPatientSSN">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label asp-for="@Model.date"></label>
+                            <input asp-for="@Model.date" type="datetime" class="form-control">
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label asp-for="@Model.DoctorId" hidden class="control-label"></label>
+                            <input asp-for="@Model.DoctorId" hidden type="text" class="form-control" id="inputPatientSSN">
+                        </div>
+                    </div>
+                    <div class="form-row ">
+                        <div class="form-group col-lg-6">
+                            <label asp-for="@Model.MedicineName" class="control-label"></label>
+                            <textarea asp-for="@Model.MedicineName" class="form-control-range" 
+                            rows="4" 
+                            cols="30"></textarea>
+                        </div>
+                    </div>
+                    <div class="btn-box">
+                        <button type="submit" class="btn ">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
