@@ -86,7 +86,7 @@
 										@item.User.PhoneNumber
 									</td>*@
 									<td class="align-middle text-center">
-										<a class="btn btn-outline-primary" asp-controller="Patient" asp-action="EditPatient" asp-route-ssn="@item.SSN"><i class="fa fa-pencil-square"></i> Edit</a> |
+										<a class="btn btn-outline-primary" asp-controller="Patient" asp-action="Edit" asp-route-ssn="@item.SSN"><i class="fa fa-pencil-square"></i> Edit</a> |
 										<a class="btn btn-outline-info" asp-controller="Patient" asp-action="PatientDetails" asp-route-ssn="@item.SSN"><i class="fa fa-eye"></i> Details</a> |
 										<a class="btn btn-outline-danger " asp-controller="Patient" asp-action="DeletePatient" asp-route-ssn="@item.SSN" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
 									</td>

@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <form asp-action="EditDoctor" enctype="multipart/form-data">
+                <form asp-action="Edit" enctype="multipart/form-data">
                     <h4>
                         Update <span>Doctor</span>
                     </h4>
@@ -55,24 +55,24 @@
                             <div class="form-group col-lg-10">
                                 <img id="profilePicture" class="border-info rounded-circle" style="max-width:150px" />
                                 <label asp-for="ProfileImg" class="w-100"></label>
-                                <input  accept="image/*" asp-for="ImageFile"
-                                    onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+                                <input accept="image/*" asp-for="ImageFile"
+                                       onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
                                 <span asp-validation-for="ImageFile" class="text-danger"></span>
                                 @*@if (@Model.ImageFile != null)
                                 {
-                                    <img id="profilePicture" alt="profile" class="profile-picture" style="height:255px; width:255px; object-fit:cover" src="data:image/*;base64)" />
+                                <img id="profilePicture" alt="profile" class="profile-picture" style="height:255px; width:255px; object-fit:cover" src="data:image/*;base64)" />
                                 }
                                 else
                                 {
-                                    <img id="profilePicture" alt="profile" class="profile-picture" style="height:255px; width:255px; object-fit:cover" src="~/images/avater.png" />
+                                <img id="profilePicture" alt="profile" class="profile-picture" style="height:255px; width:255px; object-fit:cover" src="~/images/avater.png" />
                                 }
                                 <div class="custom-file mt-2">
-                                    <input type="file"
-                                           accept="image/*"
-                                           asp-for="ImageFile"
-                                           class="" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
-                                    <label class="custom-file-label" asp-for="ImageFile"></label>
-                                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                                <input type="file"
+                                accept="image/*"
+                                asp-for="ImageFile"
+                                class="" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+                                <label class="custom-file-label" asp-for="ImageFile"></label>
+                                <span asp-validation-for="ImageFile" class="text-danger"></span>
                                 </div>*@
                             </div>
                         </div>

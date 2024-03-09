@@ -1,7 +1,5 @@
 ﻿using Database.Entities;
 using HeartDiseasePrediction.ViewModel;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -20,14 +18,16 @@ namespace HeartDiseasePrediction.Controllers
         HttpClient _client;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AppDbContext _context;
         public AccountController(IToastNotification toastNotification, UserManager<ApplicationUser> userManger,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager, AppDbContext context)
         {
             _toastNotification = toastNotification;
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
             _userManager = userManger;
             _signInManager = signInManager;
+            _context = context;
         }
         //Login
         public async Task<IActionResult> Login()
@@ -40,32 +40,6 @@ namespace HeartDiseasePrediction.Controllers
         {
             try
             {
-                //string data = JsonConvert.SerializeObject(model);
-                //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                //HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-                //    "/Account/Login", content);
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    //LoginResponseVM models = JsonConvert.DeserializeObject<LoginResponseVM>(Convert.ToString(response));
-                //    //var handler = new JwtSecurityTokenHandler();
-                //    //var jwt = handler.ReadJwtToken(models.Token);
-                //    //var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                //    //identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "unique_name").Value));
-                //    //identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
-                //    //var principal = new ClaimsPrincipal(identity);
-                //    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                //    //HttpContext.Session.SetString("JWToken", models.Token);
-                //    string token = await response.Content.ReadAsStringAsync();
-                //    HttpContext.Session.SetString("JWToken", token);
-
-                //    //ViewData["UserName"]=User.Identity.Name;
-                //    //ViewData["UserName"] = model.Email;
-                //    ViewBag.UserName = model.Email.ToString();
-                //    TempData["successMesssage"] = "Login Success.";
-                //    _toastNotification.AddSuccessToastMessage("Login Success");
-                //    return RedirectToAction("Index", "Home");
-                //}
                 if (ModelState.IsValid == true)
                 {
                     var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
@@ -74,11 +48,14 @@ namespace HeartDiseasePrediction.Controllers
                         var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
                         if (result.Succeeded)
                         {
+                            _toastNotification.AddSuccessToastMessage("Login Success");
                             return RedirectToAction("Index", "Home");
                         }
+                        _toastNotification.AddSuccessToastMessage("Email or Password is Incorrect");
                         TempData["Error"] = "Wrong credentials. please,try again!";
                         return View(loginViewModel);
                     }
+                    _toastNotification.AddSuccessToastMessage("Email or Password is Incorrect");
                     TempData["Error"] = "Wrong credentials. please,try again!";
                 }
                 return View(loginViewModel);
@@ -89,8 +66,6 @@ namespace HeartDiseasePrediction.Controllers
                 _toastNotification.AddErrorToastMessage("Email or Password is Incorrect");
                 return View(loginViewModel);
             }
-            //_toastNotification.AddErrorToastMessage("Email or Password is Incorrect");
-            //return View();
         }
         public async Task<IActionResult> ForgetPassword()
         {
@@ -153,8 +128,7 @@ namespace HeartDiseasePrediction.Controllers
         //Logout 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            HttpContext.Session.SetString("JWToken", "");
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
@@ -166,64 +140,102 @@ namespace HeartDiseasePrediction.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterOfUser(RegisterUserVM model)
         {
-            try
+
+            if (await _userManager.FindByEmailAsync(model.Email) is not null)
+                return View(model);
+
+            var user = new ApplicationUser
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-                    "/Account/registerPatient", content);
-                if (response.IsSuccessStatusCode)
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Email = model.Email,
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                BirthDate = model.BirthDate,
+                PhoneNumber = model.PhoneNumber,
+                //TwoFactorEnabled = true,
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+                var patient = new Patient
                 {
-                    TempData["successMesssage"] = "User Created successfully.";
-                    _toastNotification.AddSuccessToastMessage("Register User successfully.");
-                    return RedirectToAction("Index", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMesssage"] = ex.Message;
-                _toastNotification.AddErrorToastMessage("Register User Failed");
-                return View();
+                    UserId = user.Id,
+                    SSN = model.SSN,
+                    Insurance_No = model.Insurance_No,
+                };
+
+                await _context.Patients.AddAsync(patient);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage("Register User successfully.");
+                return RedirectToAction("Index", "Home");
             }
             _toastNotification.AddErrorToastMessage("Register User Failed");
-            return View();
+            return View(model);
         }
         public async Task<IActionResult> RegisterOfDoctor()
         {
-            //HttpResponseMessage response = _client.GetAsync(_client.BaseAddress +
-            //	"/Doctor/GetSpecailization").Result;
-            //if (response.IsSuccessStatusCode)
-            //{
-            //	string data = await response.Content.ReadAsStringAsync();
-            //	JsonConvert.DeserializeObject<Specialization>(data);
-            //}
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterOfDoctor(RegisterDoctorVM model)
         {
-            try
+            if (await _userManager.FindByEmailAsync(model.Email) is not null)
+                return View(model);
+
+            var user = new ApplicationUser
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-                    "/Account/registerDoctor", content);
-                if (response.IsSuccessStatusCode)
+                Email = model.Email,
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                BirthDate = model.BirthDate,
+                PhoneNumber = model.PhoneNumber,
+                //TwoFactorEnabled = true,
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Doctor");
+                var doctor = new Doctor
                 {
-                    TempData["successMesssage"] = "Doctor Created successfully.";
-                    _toastNotification.AddSuccessToastMessage("Doctor Created successfully.");
-                    return RedirectToAction("Index", "Doctor");
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMesssage"] = ex.Message;
-                _toastNotification.AddErrorToastMessage("Register Doctor Failed");
-                return View();
+                    UserId = user.Id,
+                    IsAvailable = true,
+                };
+                await _context.Doctors.AddAsync(doctor);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage("Doctor Created successfully.");
+                return RedirectToAction("Index", "Doctor");
             }
             _toastNotification.AddErrorToastMessage("Register Doctor Failed");
-            return View();
+            return View(model);
+
+
+            //try
+            //{
+            //    string data = JsonConvert.SerializeObject(model);
+            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
+            //        "/Account/registerDoctor", content);
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        TempData["successMesssage"] = "Doctor Created successfully.";
+            //        _toastNotification.AddSuccessToastMessage("Doctor Created successfully.");
+            //        return RedirectToAction("Index", "Doctor");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["errorMesssage"] = ex.Message;
+            //    _toastNotification.AddErrorToastMessage("Register Doctor Failed");
+            //    return View();
+            //}
+            //_toastNotification.AddErrorToastMessage("Register Doctor Failed");
+            //return View();
         }
         public async Task<IActionResult> RegisterOfMedicalAnalyst()
         {
@@ -233,27 +245,58 @@ namespace HeartDiseasePrediction.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterOfMedicalAnalyst(RegisterMedicalAnalystVM model)
         {
-            try
+            if (await _userManager.FindByEmailAsync(model.Email) is not null)
+                return View(model);
+
+            var user = new ApplicationUser
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-                    "/Account/registerMedicalAnalyst", content);
-                if (response.IsSuccessStatusCode)
+                Email = model.Email,
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                BirthDate = model.BirthDate,
+                PhoneNumber = model.PhoneNumber,
+                //TwoFactorEnabled = true,
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "MedicalAnalyst");
+                var medicalAnalyst = new MedicalAnalyst
                 {
-                    TempData["successMesssage"] = "Medical Analyst Created successfully.";
-                    _toastNotification.AddSuccessToastMessage("Medical Analyst Created successfully.");
-                    return RedirectToAction("Index", "MedicalAnalyst");
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMesssage"] = ex.Message;
-                _toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
-                return View();
+                    UserId = user.Id,
+                    LabId = model.Lab
+                };
+                await _context.MedicalAnalysts.AddAsync(medicalAnalyst);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage("Medical Analyst Created successfully.");
+                return RedirectToAction("Index", "MedicalAnalyst");
             }
             _toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
-            return View();
+            return View(model);
+
+            //try
+            //{
+            //    string data = JsonConvert.SerializeObject(model);
+            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
+            //        "/Account/registerMedicalAnalyst", content);
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        TempData["successMesssage"] = "Medical Analyst Created successfully.";
+            //        _toastNotification.AddSuccessToastMessage("Medical Analyst Created successfully.");
+            //        return RedirectToAction("Index", "MedicalAnalyst");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["errorMesssage"] = ex.Message;
+            //    _toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
+            //    return View();
+            //}
+            //_toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
+            //return View();
         }
         public async Task<IActionResult> RegisterOfReciptionist()
         {
@@ -263,27 +306,57 @@ namespace HeartDiseasePrediction.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterOfReciptionist(RegisterReciptionistVM model)
         {
-            try
+
+            if (await _userManager.FindByEmailAsync(model.Email) is not null)
+                return View(model);
+
+            var user = new ApplicationUser
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-                    "/Account/registerReceptionist", content);
-                if (response.IsSuccessStatusCode)
+                Email = model.Email,
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                BirthDate = model.BirthDate,
+                PhoneNumber = model.PhoneNumber,
+                //TwoFactorEnabled = true,
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+                var reciptionist = new Reciptionist
                 {
-                    TempData["successMesssage"] = "Reciptionist Created successfully.";
-                    _toastNotification.AddSuccessToastMessage("Reciptionist Created successfully.");
-                    return RedirectToAction("Index", "Reciptionist");
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMesssage"] = ex.Message;
-                _toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
-                return View();
+                    UserId = user.Id,
+                };
+                await _context.Reciptionists.AddAsync(reciptionist);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage("Reciptionist Created successfully.");
+                return RedirectToAction("Index", "Reciptionist");
             }
             _toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
-            return View();
+            return View(model);
+            //try
+            //{
+            //    string data = JsonConvert.SerializeObject(model);
+            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
+            //        "/Account/registerReceptionist", content);
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        TempData["successMesssage"] = "Reciptionist Created successfully.";
+            //        _toastNotification.AddSuccessToastMessage("Reciptionist Created successfully.");
+            //        return RedirectToAction("Index", "Reciptionist");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["errorMesssage"] = ex.Message;
+            //    _toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
+            //    return View();
+            //}
+            //_toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
+            //return View();
         }
 
         public IActionResult AccessDenied()

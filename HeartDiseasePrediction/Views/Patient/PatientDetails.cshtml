@@ -87,7 +87,7 @@
                             <h4><strong>@Model.FirstName</strong> <strong>@Model.LastName</strong></h4>
                             <p class="text-secondary mb-1">Patient</p>
                             <p class="text-muted font-size-sm">@Model.Email</p>
-                            <a class="btn btn-primary" asp-controller="Patient" asp-action="EditPatient" asp-route-ssn="@Model.SSN"><i class="fa fa-pencil-square"></i>  Edit</a>
+                            <a class="btn btn-primary" asp-controller="Patient" asp-action="Edit" asp-route-ssn="@Model.SSN"><i class="fa fa-pencil-square"></i>  Edit</a>
                             <a class="btn btn-danger" asp-controller="Patient" asp-action="DeletePatient" asp-route-ssn="@Model.SSN" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
                         </div>
                     </div>

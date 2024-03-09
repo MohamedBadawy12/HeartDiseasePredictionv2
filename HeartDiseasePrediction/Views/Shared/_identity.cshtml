@@ -1,13 +1,11 @@
 ﻿@using Database.Entities;
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.AspNetCore.Identity
-@*@inject SignInManager<ApplicationUser> SignInManager*@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAcc
 
-@if (httpAcc.HttpContext.Session.GetString("JWToken") != null &&
-	httpAcc.HttpContext.Session.GetString("JWToken").ToString().Length > 0)@*string.IsNullOrWhiteSpace(HttpContextAccessor.HttpContext.Session.GetString("JWToken"))*@
+@if (User.Identity.IsAuthenticated) @*httpAcc.HttpContext.Session.GetString("JWToken") != null &&
+			httpAcc.HttpContext.Session.GetString("JWToken").ToString().Length > 0*@
 {
-
 	<div class="nav-item dropdown">
 		<button class="nav-link btn btn-outline-info dropdown-toggle "
 				id="navbarDropdown" role="button"
@@ -16,7 +14,7 @@
 		class="rounded-circle"
 		height="22"
 		alt="Portrait of a User"
-		loading="lazy" />*@ @ViewBag.UserName
+		loading="lazy" />*@ @User.Identity.Name
 		</button>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 

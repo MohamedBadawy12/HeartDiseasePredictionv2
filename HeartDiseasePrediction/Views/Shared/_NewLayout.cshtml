@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http;
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpAcc
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8" />
@@ -73,32 +71,6 @@
                                             <a class="nav-link" asp-controller="Account" asp-action="RegisterOfDoctor"> Dashboard</a>
                                         </li>
                                     }
-                                    @*<li class="nav-item">
-                                        <a class="nav-link" asp-controller="Account" asp-action="RegisterOfDoctor"> Dashboard</a>
-                                    </li>*@
-                                    @*<li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-gear"></i> Management
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                            <h6 class="dropdown-header">Doctors</h6>
-                                            <a class="dropdown-item" asp-controller="Account" asp-action="RegisterOfDoctor"><i class="fa fa-user-md"></i> Add Doctors</a>
-                                            <a class="dropdown-item" asp-controller="Doctor" asp-action="Index"><i class="fa fa-address-book-o"></i> Doctors List</a>
-                                            <div class="dropdown-divider"></div>
-                                            <h6 class="dropdown-header">Medical Analysts</h6>
-                                            <a class="dropdown-item" asp-controller="Account" asp-action="RegisterOfMedicalAnalyst"><i class="fa fa-user"></i> Add Medical Analyst</a>
-                                            <a class="dropdown-item" asp-controller="MedicalAnalyst" asp-action="Index"><i class="fa fa-address-book"></i> Medical Analysts List</a>
-                                            <div class="dropdown-divider"></div>
-                                            <h6 class="dropdown-header">Reciptionists</h6>
-                                            <a class="dropdown-item" asp-controller="Account" asp-action="RegisterOfReciptionist"><i class="fa fa-user"></i> Add Reciptionist</a>
-                                            <a class="dropdown-item" asp-controller="Reciptionist" asp-action="Index"><i class="fa fa-address-book"></i> Reciptionists List</a>
-                                            <div class="dropdown-divider"></div>
-                                            <h6 class="dropdown-header">Patients</h6>
-                                            <a class="dropdown-item" asp-controller="Account" asp-action="RegisterOfUser"><i class="fa fa-user-circle"></i> Add patient</a>
-                                            <a class="dropdown-item" asp-controller="Patient" asp-action="Index"><i class="fa fa-address-book"></i> patients List</a>
-                                        </div>
-                                    </li>*@
                                     <li class="nav-item">
                                         <a class="nav-link" href="doctor.html">Doctors</a>
                                     </li>
@@ -108,52 +80,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
                                     </li>
-                                    @*<li>
-                                        <span style="padding-left:150px"></span>
-                                    </li> *@
-                                    @*<li class="nav-item dropdown">
-                                        <button class="nav-link btn btn-outline-info dropdown-toggle " id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <img src="~/images/doctor.png"
-                                                 class="rounded-circle"
-                                                 height="22"
-                                                 alt="Portrait of a Woman"
-                                                 loading="lazy" /> @User.Identity.Name
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                                            <a class="dropdown-item" asp-controller="Doctor" asp-action="GetProfile">
-                                                <i class="fa fa-user"> </i>  Profile
-                                            </a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item btn-outline-danger" asp-controller="Account" asp-action="Logout" onclick="ConfirmLogout()">
-                                                <i class="fa fa-sign-out" aria-hidden="true"></i>
-                                                <span>
-                                                     Log Out
-                                                </span>
-                                            </a>
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                            <li>
-                                            <a class="dropdown-item" asp-controller="Account" asp-action="Users">Users</a>
-                                            </li>
-                                            }
-                                        </div>
-                                    </li>*@
                                 </ul>
                             </div>
                             <div class="quote_btn-container">
-                                @*<a asp-controller="Account" asp-action="Login">
-                                    <i class="fa fa-sign-in" aria-hidden="true"></i>
-                                    <span>
-                                        Login
-                                    </span>
-                                </a>
-                                <a asp-controller="Account" asp-action="RegisterOfUser">
-                                    <i class="fa fa-user" aria-hidden="true"></i>
-                                    <span>
-                                        Sign Up
-                                    </span>
-                                </a>*@
                                 <partial name="_identity.cshtml"></partial>
                             </div>
                         </div>

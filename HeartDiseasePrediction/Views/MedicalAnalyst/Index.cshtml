@@ -93,7 +93,7 @@
 							@item.User.PhoneNumber
 							</td>*@
 									<td class="align-middle text-center">
-										<a class="btn btn-outline-primary" asp-controller="MedicalAnalyst" asp-action="EditMedicalAnalyst" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
+										<a class="btn btn-outline-primary" asp-controller="MedicalAnalyst" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
 										<a class="btn btn-outline-info" asp-controller="MedicalAnalyst" asp-action="MedicalAnalystDetails" asp-route-id="@item.Id"><i class="fa fa-eye"></i> Details</a> |
 										<a class="btn btn-outline-danger " asp-controller="MedicalAnalyst" asp-action="DeleteMedicalAnalyst" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
 									</td>

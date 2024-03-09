@@ -82,7 +82,7 @@
 										@item.PatientSSN
 									</td>
 									<td class="align-middle text-center">
-										<a class="btn btn-outline-primary" asp-controller="Prescription" asp-action="EditPrescription" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
+										<a class="btn btn-outline-primary" asp-controller="Prescription" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
 										<a class="btn btn-outline-info" asp-controller="Prescription" asp-action="PrescriptionDetails" asp-route-id="@item.Id"><i class="fa fa-eye"></i> Details</a> |
 										<a class="btn btn-outline-danger " asp-controller="Prescription" asp-action="DeletePrescription" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
 									</td>

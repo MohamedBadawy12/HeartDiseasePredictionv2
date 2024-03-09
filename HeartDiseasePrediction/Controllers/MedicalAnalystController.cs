@@ -1,157 +1,159 @@
 ﻿using Database.Entities;
 using HeartDiseasePrediction.ViewModel;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NToastNotify;
+using Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HeartDiseasePrediction.Controllers
 {
-	public class MedicalAnalystController : Controller
-	{
-		private readonly IToastNotification _toastNotification;
-		Uri baseAddress = new Uri("https://localhost:44304/api");
-		HttpClient _client;
-		public MedicalAnalystController(IToastNotification toastNotification)
-		{
-			_toastNotification = toastNotification;
-			_client = new HttpClient();
-			_client.BaseAddress = baseAddress;
-		}
-		//get all Medical Analysts in list
-		public async Task<IActionResult> Index()
-		{
-			var accessToken = HttpContext.Session.GetString("JWToken");
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			List<MedicalAnalyst> medicalAnalystViewModel = new List<MedicalAnalyst>();
-			HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/MedicalAnalyst").Result;
-			if (response.IsSuccessStatusCode)
-			{
-				string data = await response.Content.ReadAsStringAsync();
-				medicalAnalystViewModel = JsonConvert.DeserializeObject<List<MedicalAnalyst>>(data);
-			}
-			return View(medicalAnalystViewModel);
-		}
-		[HttpPost]
-		public async Task<IActionResult> Index(string search)
-		{
-			var accessToken = HttpContext.Session.GetString("JWToken");
-			_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			List<MedicalAnalyst> medicalAnalystViewModel = new List<MedicalAnalyst>();
-			HttpResponseMessage response = _client.GetAsync(_client.BaseAddress +
-				$"/MedicalAnalyst/Search?search={search}").Result;
-			if (response.IsSuccessStatusCode)
-			{
-				string data = await response.Content.ReadAsStringAsync();
-				medicalAnalystViewModel = JsonConvert.DeserializeObject<List<MedicalAnalyst>>(data);
-			}
-			return View(medicalAnalystViewModel);
-		}
-		public async Task<IActionResult> MedicalAnalystDetails(int id)
-		{
-			try
-			{
-				var accessToken = HttpContext.Session.GetString("JWToken");
-				_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress +
-					$"/MedicalAnalyst/GetMedicalAnalystById?id={id}");
-				if (response.IsSuccessStatusCode)
-				{
-					string data = response.Content.ReadAsStringAsync().Result;
-					var medicalAnalyst = JsonConvert.DeserializeObject<MedicalAnalystVM>(data);
-					return View(medicalAnalyst);
-				}
-				else
-				{
-					return RedirectToAction("Index");
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
-		}
-		//Edit details of Medical Analyst
-		[HttpGet]
-		public async Task<IActionResult> EditMedicalAnalyst(int id)
-		{
-			try
-			{
-				var accessToken = HttpContext.Session.GetString("JWToken");
-				_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress +
-					$"/MedicalAnalyst/GetMedicalAnalystById?id={id}");
-				if (response.IsSuccessStatusCode)
-				{
-					string data = response.Content.ReadAsStringAsync().Result;
-					var medicalAnalyst = JsonConvert.DeserializeObject<MedicalAnalystVM>(data);
-					return View(medicalAnalyst);
-				}
-				else
-				{
-					return RedirectToAction("Index");
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
-		}
-		[HttpPost]
-		public async Task<IActionResult> EditMedicalAnalyst(int id, MedicalAnalystVM model)
-		{
-			try
-			{
-				var accessToken = HttpContext.Session.GetString("JWToken");
-				_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				string data = JsonConvert.SerializeObject(model);
-				StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-				HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress +
-					$"/MedicalAnalyst/EditMedicalAnalyst?id={id}", content);
-				if (response.IsSuccessStatusCode)
-				{
-					TempData["successMessage"] = "Medical Analyst Details Updated.";
-					_toastNotification.AddSuccessToastMessage("Medical Analyst Updated successfully");
-					return RedirectToAction("Index");
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
-			return View();
-		}
+    public class MedicalAnalystController : Controller
+    {
+        private readonly IToastNotification _toastNotification;
+        private readonly IMedicalAnalystService _medicalAnalystService;
+        private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public MedicalAnalystController(IToastNotification toastNotification, IMedicalAnalystService medicalAnalystService
+            , AppDbContext context, IWebHostEnvironment webHostEnvironment)
+        {
+            _toastNotification = toastNotification;
+            _context = context;
+            _webHostEnvironment = webHostEnvironment;
+            _medicalAnalystService = medicalAnalystService;
+        }
+        //get all Medical Analysts in list
+        public async Task<IActionResult> Index()
+        {
+            var medicalAnalyst = await _medicalAnalystService.GetMedicalAnalysts();
+            return View(medicalAnalyst);
+        }
+        //search
+        [HttpPost]
+        public async Task<IActionResult> Index(string search)
+        {
+            var medicalAnalyst = await _medicalAnalystService.FilterMedicalAnalyst(search);
+            return View(medicalAnalyst);
+        }
+        //Medical Analyst Details
+        public async Task<IActionResult> MedicalAnalystDetails(int id)
+        {
+            try
+            {
+                var medicalAnalyst = await _medicalAnalystService.GetMedicalAnalyst(id);
+                if (medicalAnalyst == null)
+                    return View("NotFound");
 
-		//Delete Medical Analyst 
-		public async Task<IActionResult> DeleteMedicalAnalyst(int id)
-		{
-			try
-			{
-				var accessToken = HttpContext.Session.GetString("JWToken");
-				_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-				HttpResponseMessage response = await _client.DeleteAsync(_client.BaseAddress +
-					$"/MedicalAnalyst/{id}");
-				if (response.IsSuccessStatusCode)
-				{
-					TempData["successMessage"] = "Medical Analyst Details Updated.";
-					return RedirectToAction("Index");
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
-			return View();
-		}
-	}
+                var medicalAnalystVM = new MedicalAnalystVM
+                {
+                    FirstName = medicalAnalyst.User.FirstName,
+                    LastName = medicalAnalyst.User.LastName,
+                    BirthDate = medicalAnalyst.User.BirthDate,
+                    Email = medicalAnalyst.User.Email,
+                    Gender = medicalAnalyst.User.Gender,
+                    PhoneNumber = medicalAnalyst.User.PhoneNumber,
+                    ProfileImg = medicalAnalyst.User.ProfileImg,
+                };
+                return View(medicalAnalystVM);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+        }
+        //Edit details of Medical Analyst
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var medicalAnalyst = await _medicalAnalystService.GetMedicalAnalyst(id);
+                if (medicalAnalyst == null)
+                    return View("NotFound");
+
+                var medicalAnalystVM = new MedicalAnalystVM
+                {
+                    FirstName = medicalAnalyst.User.FirstName,
+                    LastName = medicalAnalyst.User.LastName,
+                    BirthDate = medicalAnalyst.User.BirthDate,
+                    Email = medicalAnalyst.User.Email,
+                    Gender = medicalAnalyst.User.Gender,
+                    PhoneNumber = medicalAnalyst.User.PhoneNumber,
+                    ProfileImg = medicalAnalyst.User.ProfileImg,
+                    LabId = medicalAnalyst.LabId,
+                };
+                return View(medicalAnalystVM);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, MedicalAnalystVM model)
+        {
+            try
+            {
+                var medicalAnalyst = await _medicalAnalystService.GetMedicalAnalyst(id);
+                if (medicalAnalyst == null)
+                    return View("NotFound");
+
+                //string wwwRootPath = _webHostEnvironment.WebRootPath;
+                //string fileName = Path.GetFileNameWithoutExtension(model.ImageFile.FileName);
+                //string extension = Path.GetExtension(model.ImageFile.FileName);
+                //model.ProfileImg = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                //string path = Path.Combine(wwwRootPath + "/Upload", fileName);
+
+                //using (var fileStream = new FileStream(path, FileMode.Create))
+                //{
+                //    await model.ImageFile.CopyToAsync(fileStream);
+                //}
+                medicalAnalyst.User.PhoneNumber = model.PhoneNumber;
+                medicalAnalyst.User.Email = model.Email;
+                medicalAnalyst.User.FirstName = model.FirstName;
+                medicalAnalyst.User.LastName = model.LastName;
+                medicalAnalyst.User.BirthDate = model.BirthDate;
+                medicalAnalyst.User.Gender = model.Gender;
+                medicalAnalyst.LabId = model.LabId;
+                //doctor.User.ProfileImg = model.ProfileImg;
+
+                _context.MedicalAnalysts.Update(medicalAnalyst);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage("MedicalAnalyst Updated successfully");
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                _toastNotification.AddErrorToastMessage("MedicalAnalyst Updated Failed");
+                return View();
+            }
+        }
+
+        //Delete Medical Analyst 
+        public async Task<IActionResult> DeleteMedicalAnalyst(int id)
+        {
+            var medicalAnalyst = _medicalAnalystService.Get_MedicalAnalyst(id);
+            if (medicalAnalyst == null)
+                return View("NotFound");
+            //var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Upload", medicalAnalyst.User.ProfileImg);
+            try
+            {
+                //if (System.IO.File.Exists(imagePath))
+                //    System.IO.File.Delete(imagePath);
+                _medicalAnalystService.Remove(medicalAnalyst);
+                await _context.SaveChangesAsync();
+                _toastNotification.AddSuccessToastMessage($"MedicalAnalyst with ID {id} removed successfully");
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = ex.Message;
+                return View();
+            }
+        }
+    }
 }

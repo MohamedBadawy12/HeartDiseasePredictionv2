@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <form asp-action="EditPrescription">
+                <form asp-action="Edit">
                     <h4>
                         Update <span>Prescription</span>
                     </h4>
@@ -30,9 +30,9 @@
                     <div class="form-row ">
                         <div class="form-group col-lg-6">
                             <label asp-for="@Model.MedicineName" class="control-label"></label>
-                            <textarea asp-for="@Model.MedicineName" class="form-control-range" 
-                            rows="4" 
-                            cols="30"></textarea>
+                            <textarea asp-for="@Model.MedicineName" class="form-control-range"
+                                      rows="4"
+                                      cols="30"></textarea>
                         </div>
                     </div>
                     <div class="btn-box">
