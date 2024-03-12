@@ -18,9 +18,44 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
 	<link href="~/css/style.css" rel="stylesheet" />
 	<link href="~/css/responsive.css" rel="stylesheet" />
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        setTimeout(function(){
+            $('.loader_bg').fadeToggle();
+        },1500)
+    </script>*@
+    <script>
+        window.onload=function(){
+            document.getElementById('loader').style.display="none";
+            document.getElementById('content').style.display = "block";
+        }
+    </script>
+    <style>
+    #content{
+        display:none;
+    }
+    #loader{
+        position:absolute;
+        margin:auto;
+        top:0;
+        right:0;
+        bottom:0;
+        left:0;
+        width:100px;
+        height:100px;
+            
+        }
+    #loader img{width:100px;}
+    </style>
 </head>
 <body>
-    <div class="hero_area">
+    <div class="loader_bg">
+        <div class="loader"></div>
+    </div>
+    <div id="loader">
+            <img src="https://cdn.dribbble.com/users/1787505/screenshots/7300251/media/a351d9e0236c03a539181b95faced9e0.gif" />
+    </div>
+    <div class="hero_area" id="content">
         <!-- header section strats -->
         <header class="header_section">
             <div class="header_top">
@@ -71,12 +106,12 @@
                                             <a class="nav-link" asp-controller="Account" asp-action="RegisterOfDoctor"> Dashboard</a>
                                         </li>
                                     }
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="doctor.html">Doctors</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="Prescription" asp-action="Index">Prescriptions</a>
-                                    </li>
+                                    @if(User.Identity.IsAuthenticated && User.IsInRole("User"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="doctor.html">Doctors</a>
+                                        </li>
+                                    }
                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
                                     </li>

@@ -1,13 +1,15 @@
 ﻿using Database.Entities;
-using HearPrediction.Api.Data.Services;
 using HearPrediction.Api.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using System;
 using System.Threading.Tasks;
 
 namespace HearPrediction.Api.Controllers
 {
+	[Authorize(Roles = "Doctor")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class PrescriptionController : ControllerBase
@@ -21,7 +23,7 @@ namespace HearPrediction.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAllPrescriptions()
 		{
-			var result = await _unitOfWork.prescription.GetPrescriptions();
+			var result = await _unitOfWork.prescriptions.GetPrescriptions();
 			return Ok(result);
 		}
 
@@ -29,7 +31,7 @@ namespace HearPrediction.Api.Controllers
 		[HttpGet("id")]
 		public async Task<IActionResult> GetPrescription(int id)
 		{
-			var result = await _unitOfWork.prescription.GetPrescription(id);
+			var result = await _unitOfWork.prescriptions.GetPrescription(id);
 			return Ok(result);
 		}
 
@@ -37,7 +39,7 @@ namespace HearPrediction.Api.Controllers
 		[HttpGet("GetPrescriptionById")]
 		public async Task<IActionResult> GetPrescriptionDetails(int id)
 		{
-			var prescription = await _unitOfWork.prescription.GetPrescription(id);
+			var prescription = await _unitOfWork.prescriptions.GetPrescription(id);
 			if (prescription == null)
 				return NotFound($"No prescription was found with Id: {id}");
 
@@ -55,7 +57,7 @@ namespace HearPrediction.Api.Controllers
 		[HttpGet("GetPrescriptionByPatientSSN")]
 		public async Task<IActionResult> GetPrescriptionofPatient(long ssn)
 		{
-			var prescription = await _unitOfWork.prescription.GetPrescriptionsByUserSSN(ssn);
+			var prescription = await _unitOfWork.prescriptions.GetPrescriptionsByUserSSN(ssn);
 			if (prescription == null)
 				return NotFound($"No prescription with SSN was found with Id: {ssn}");
 
@@ -68,7 +70,7 @@ namespace HearPrediction.Api.Controllers
 		{
 			try
 			{
-				var result = await _unitOfWork.prescription.FilterPrescriptions(search);
+				var result = await _unitOfWork.prescriptions.FilterPrescriptions(search);
 				return Ok(result);
 			}
 			catch (Exception)
@@ -100,7 +102,7 @@ namespace HearPrediction.Api.Controllers
 				MedicineName = model.MedicineName,
 			};
 
-			await _unitOfWork.prescription.Add(prescription);
+			await _unitOfWork.prescriptions.AddAsync(prescription);
 			await _unitOfWork.Complete();
 
 			doctor.prescriptions.Add(prescription);
@@ -116,7 +118,7 @@ namespace HearPrediction.Api.Controllers
 		{
 			try
 			{
-				var prescription = await _unitOfWork.prescription.GetPrescription(id);
+				var prescription = await _unitOfWork.prescriptions.GetPrescription(id);
 				if (prescription == null)
 					return NotFound($"No prescription was found with Id: {id}");
 
@@ -137,12 +139,12 @@ namespace HearPrediction.Api.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var prescription = _unitOfWork.prescription.Get_Prescription(id);
+			var prescription = _unitOfWork.prescriptions.Get_Prescription(id);
 			if (prescription == null)
 				return NotFound($"No prescription was found with Id: {id}");
 			try
 			{
-				_unitOfWork.prescription.Remove(prescription);
+				_unitOfWork.prescriptions.Remove(prescription);
 				await _unitOfWork.Complete();
 				return Ok(prescription);
 			}

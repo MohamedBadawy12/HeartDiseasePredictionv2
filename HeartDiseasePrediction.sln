@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Databa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HearPrediction.Api", "Heart_Prediction_Api\HearPrediction\HearPrediction.Api.csproj", "{777041B6-8AF6-470C-AA55-4F555882B607}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{4BF5DB94-CBF6-4E16-B53D-B1ED617FF4E9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{92E8C2B0-FE40-4C5C-9C4B-94C93B4DB3A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{92E8C2B0-FE40-4C5C-9C4B-94C93B4DB3A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{777041B6-8AF6-470C-AA55-4F555882B607}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{777041B6-8AF6-470C-AA55-4F555882B607}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{777041B6-8AF6-470C-AA55-4F555882B607}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BF5DB94-CBF6-4E16-B53D-B1ED617FF4E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BF5DB94-CBF6-4E16-B53D-B1ED617FF4E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BF5DB94-CBF6-4E16-B53D-B1ED617FF4E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BF5DB94-CBF6-4E16-B53D-B1ED617FF4E9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92E8C2B0-FE40-4C5C-9C4B-94C93B4DB3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{92E8C2B0-FE40-4C5C-9C4B-94C93B4DB3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92E8C2B0-FE40-4C5C-9C4B-94C93B4DB3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU

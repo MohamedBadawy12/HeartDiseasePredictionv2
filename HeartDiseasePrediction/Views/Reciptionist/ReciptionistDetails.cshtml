@@ -87,8 +87,8 @@
                             <h4><strong>@Model.FirstName</strong> <strong>@Model.LastName</strong></h4>
                             <p class="text-secondary mb-1">Reciptionist</p>
                             <p class="text-muted font-size-sm">@Model.Email</p>
-                            <a class="btn btn-primary" asp-controller="Reciptionist" asp-action="EditReciptionist" asp-route-id="@Model.Id"><i class="fa fa-pencil-square"></i>  Edit</a>
-                            <button class="btn btn-danger" asp-controller="Reciptionist" asp-action="DeleteReciptionist" asp-route-id="@Model.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</button>
+                            @*<a class="btn btn-primary" asp-controller="Reciptionist" asp-action="EditReciptionist" asp-route-id="@Model.Id"><i class="fa fa-pencil-square"></i>  Edit</a>
+                            <button class="btn btn-danger" asp-controller="Reciptionist" asp-action="DeleteReciptionist" asp-route-id="@Model.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</button>*@
                         </div>
                     </div>
                 </div>

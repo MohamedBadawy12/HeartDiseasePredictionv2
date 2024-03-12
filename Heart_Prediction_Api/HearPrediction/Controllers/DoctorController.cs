@@ -1,10 +1,10 @@
 ﻿using Database.Entities;
-using HearPrediction.Api.Data.Services;
 using HearPrediction.Api.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -30,7 +30,7 @@ namespace HearPrediction.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAllDoctors()
 		{
-			var doctors = await _unitOfWork.Doctors.GetDectors();
+			var doctors = await _unitOfWork.Doctors.GetDoctors();
 			return Ok(doctors);
 		}
 
@@ -87,8 +87,8 @@ namespace HearPrediction.Api.Controllers
 			var doctorDetailApp = new DoctorDetailsDTO
 			{
 				Doctor = await _unitOfWork.Doctors.GetDoctor(id),
-				UpcomingAppointments = await _unitOfWork.appointment.GetTodaysAppointmentsAsync(id),
-				Appointments = await _unitOfWork.appointment.GetAppointmentByDoctorAsync(id),
+				//UpcomingAppointments = await _unitOfWork.appointment.GetTodaysAppointmentsAsync(id),
+				//Appointments = await _unitOfWork.appointment.GetAppointmentByDoctorAsync(id),
 			};
 			return Ok(doctorDetailApp);
 		}
@@ -131,11 +131,11 @@ namespace HearPrediction.Api.Controllers
 			var doctor = _unitOfWork.Doctors.Get_Doctor(id);
 			if (doctor == null)
 				return NotFound($"No doctor was found with Id: {id}");
-			var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Upload", doctor.User.ProfileImg);
+			//var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Upload", doctor.User.ProfileImg);
 			try
 			{
-				if (System.IO.File.Exists(imagePath))
-					System.IO.File.Delete(imagePath);
+				//if (System.IO.File.Exists(imagePath))
+				//	System.IO.File.Delete(imagePath);
 				_unitOfWork.Doctors.Delete(doctor);
 				await _unitOfWork.Complete();
 				return Ok($"Doctor with ID {id} removed successfully");

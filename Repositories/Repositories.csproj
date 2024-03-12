@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Database\Database.csproj" />
-    <ProjectReference Include="..\Heart_Prediction_Api\HearPrediction\HearPrediction.Api.csproj" />
   </ItemGroup>
 
 </Project>

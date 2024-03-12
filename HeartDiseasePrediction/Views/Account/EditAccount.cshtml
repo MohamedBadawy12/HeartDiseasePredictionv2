@@ -1,0 +1,98 @@
+﻿@using HeartDiseasePrediction.ViewModel;
+@model EditAccountProfile
+@{
+    ViewBag.Tittle = "Edit Account";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+<div class="card card-body bg-light" style="margin:20px">
+    <div class="main-body">
+        <nav aria-label="breadcrumb" class="main-breadcrumb ">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Edit</li>
+                <li class="breadcrumb-item">Account</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Account</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container rounded bg-white mt-4 mb-5">
+        <div class="row">
+            <form enctype="multipart/form-data" method="post">
+                <div class="col-md-4 border-right">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                        <img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                        <span class="font-weight-bold">@Model.FirstName</span> <span class="font-weight-bold">@Model.LastName</span>
+                        <span class="text-black-50">edogaru@mail.com.my</span><span> </span>
+                    </div>
+                </div>
+                <div class="col-md-6 border-right">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Profile Settings</h4>
+                        </div>
+                        <div class="row mt-2">
+                            <input asp-for="@Model.Id" type="text" class="form-control" hidden placeholder="Id" value="">
+                            <div class="col-md-6">
+                                <label asp-for="@Model.FirstName class="labels"></label>
+                                <input asp-for="@Model.FirstName" type="text" class="form-control" placeholder="First Name" value="">
+                                <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="@Model.LastName" class="labels"></label>
+                                <input asp-for="@Model.LastName" type="text" class="form-control" value="" placeholder="Last Name">
+                                <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label asp-for="@Model.PhoneNumber" class="labels"></label>
+                                <input asp-for="@Model.PhoneNumber" type="text" class="form-control" placeholder="Enter Phone Nnumber" value="">
+                                <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="@Model.Email" class="labels"></label>
+                                <input asp-for="@Model.Email" type="text" class="form-control" placeholder="Enter Phone Nnumber" disabled value="">
+                            </div>
+                            @*<div class="col-md-12">
+                                <label asp-for="@Model.Gender" class="labels"></label>
+                                <select asp-for="@Model.Gender" class="form-control wide" id="inputGender" asp-items="Html.GetEnumSelectList<Gender>()">
+                                    <option value="NoSelected ">--Please Select Gender-- </option>
+                                </select>
+                                <span asp-validation-for="@Model.Gender" class="text-danger"></span>
+                            </div>*@
+                            <div class="col-md-12">
+                                <label asp-for="@Model.BirthDate" class="labels"></label>
+                                <input asp-for="@Model.BirthDate" type="datetime" class="form-control">
+                                <span asp-validation-for="@Model.BirthDate" class="text-danger"></span>
+                            </div>
+                            @*<div class="col-md-12">
+                                <label asp-for="@Model.Password" class="labels"></label>
+                                <input asp-for="@Model.Password" type="password" class="form-control" placeholder="Enter Phone Nnumber" disabled value="">
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="@Model.ConfirmPassword" class="labels"></label>
+                                <input asp-for="@Model.ConfirmPassword" type="password" class="form-control" placeholder="Enter Phone Nnumber" disabled value="">
+                            </div>*@
+
+                            @*<div class="col-md-12"><label class="labels">State</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
+                            <div class="col-md-12"><label class="labels">Area</label><input type="text" class="form-control" placeholder="enter address line 2" value=""></div>
+                            <div class="col-md-12"><label class="labels">Email ID</label><input type="text" class="form-control" placeholder="enter email id" value=""></div>
+                            <div class="col-md-12"><label class="labels">Education</label><input type="text" class="form-control" placeholder="education" value=""></div>*@
+                        </div>
+                        @*<div class="row mt-3">
+                        <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>
+                        <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>
+                        </div>*@
+                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
+                    </div>
+                </div>
+           </form>
+            @* <div class="col-md-4">
+            <div class="p-3 py-5">
+            <div class="d-flex justify-content-between align-items-center experience"><span>Edit Experience</span><span class="border px-3 p-1 add-experience"><i class="fa fa-plus"></i>&nbsp;Experience</span></div><br>
+            <div class="col-md-12"><label class="labels">Experience in Designing</label><input type="text" class="form-control" placeholder="experience" value=""></div> <br>
+            <div class="col-md-12"><label class="labels">Additional Details</label><input type="text" class="form-control" placeholder="additional details" value=""></div>
+            </div>
+            </div>*@
+        </div>
+    </div>
+</div>

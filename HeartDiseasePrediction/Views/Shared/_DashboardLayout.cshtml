@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Database.Entities;
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -18,10 +19,42 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link href="~/css/responsive.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style2.css">
-</head>
+    <script>
+        window.onload = function () {
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('content').style.display = "block";
+        }
+    </script>
+    <style>
+        #content {
+            display: none
+        }
 
+        #loader {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+        }
+
+        #loader img {
+            width: 100px;
+        }
+    </style>
+
+</head>
 <body>
-    <div class="wrapper">
+    <div id="loader">
+        <img src="/images/image_processing20191002-6429-tbqgfv.gif" />
+    </div>
+   @* <div id="loader">
+        <img src="https://assets.materialup.com/uploads/518165c7-66a8-4494-b954-c12e31373256/preview.gif" />
+    </div>*@
+    <div class="wrapper" id="contant">
         <aside id="sidebar">
             <div class="d-flex">
                 <button class="toggle-btn" type="button">
@@ -36,18 +69,21 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="lni lni-user"></i>
-                        <span>Profile</span>
-                    </a>
+                   @{
+                        ApplicationUser user = new ApplicationUser();
+                        <a asp-controller="Account" asp-action="EditAccount" asp-route-Id="@user.Id" class="sidebar-link">
+                            <i class="lni lni-user"></i>
+                            <span>Profile</span>
+                        </a>
+                   }
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a asp-action="Index" asp-controller="Prescription" class="sidebar-link">
                         <i class="lni lni-agenda"></i>
-                        <span>Task</span>
+                        <span>Prescriptions</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                @*<li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
                         <i class="lni lni-protection"></i>
@@ -61,7 +97,7 @@
                             <a href="#" class="sidebar-link">Register</a>
                         </li>
                     </ul>
-                </li>
+                </li>*@
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                        data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
@@ -112,17 +148,12 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a asp-action="Index" asp-controller="Lab" class="sidebar-link">
                         <i class="lni lni-popup"></i>
-                        <span>Notification</span>
+                        <span>Laboratory</span>
                     </a>
                 </li>
-                @*<li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="lni lni-cog"></i>
-                        <span>Setting</span>
-                    </a>
-                </li>*@
+                
             </ul>
             @*<div class="sidebar-footer">
                 <a href="#" class="sidebar-link">
@@ -155,7 +186,7 @@
                                 class="rounded-circle"
                                 height="24"
                                 alt="Portrait of a User"
-                                     loading="lazy" /> <span>@User.Identity.Name</span>
+                                     loading="lazy" /> <span>Hello @(User.FindFirst("UserFirstName").Value + " " + User.FindFirst("UserLastName").Value)</span>
                             </a>
                             <a asp-controller="Account" asp-action="Logout" onclick="ConfirmLogout()">
                                 <i class="lni lni-exit"></i>

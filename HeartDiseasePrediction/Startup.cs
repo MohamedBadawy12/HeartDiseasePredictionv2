@@ -1,4 +1,5 @@
 using Database.Entities;
+using HeartDiseasePrediction.Helper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,9 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NToastNotify;
-using Repositories.Interfaces;
-using Services;
-using Services.Interfaces;
+using Repositories;
 using System;
 
 namespace HeartDiseasePrediction
@@ -42,19 +41,8 @@ namespace HeartDiseasePrediction
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
-            services.AddTransient<IDoctorService, DoctorService>();
-            services.AddTransient<IDoctorRepository, Repositories.DoctorRepository>();
-            services.AddTransient<IPatientService, PatientService>();
-            services.AddTransient<IPatientRepository, Repositories.PatientRepository>();
-            services.AddTransient<IMedicalAnalystService, MedicalAnalystService>();
-            services.AddTransient<IMedicalAnalystRepository, Repositories.MedicalAnalystRepository>();
-            services.AddTransient<IReciptionistService, ReciptionistService>();
-            services.AddTransient<IReciptionistRepository, Repositories.ReciptionistRepository>();
-            services.AddTransient<IPrescriptionsService, PrescriptionsService>();
-            services.AddTransient<IPrescriptionRepository, Repositories.PrescriptionRepository>();
-            services.AddTransient<ILabService, LabService>();
-            services.AddTransient<ILabRepository, Repositories.LabRepository>();
-
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
             services.AddDistributedMemoryCache();
 
             services.AddSession(options =>

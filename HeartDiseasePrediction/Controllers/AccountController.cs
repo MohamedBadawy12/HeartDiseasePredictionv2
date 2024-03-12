@@ -170,7 +170,7 @@ namespace HeartDiseasePrediction.Controllers
                 await _context.Patients.AddAsync(patient);
                 await _context.SaveChangesAsync();
                 _toastNotification.AddSuccessToastMessage("Register User successfully.");
-                return RedirectToAction("Index", "Home");
+                return View("CompletedSuccessfully");
             }
             _toastNotification.AddErrorToastMessage("Register User Failed");
             return View(model);
@@ -358,7 +358,62 @@ namespace HeartDiseasePrediction.Controllers
             //_toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
             //return View();
         }
-
+        [HttpGet]
+        public async Task<IActionResult> EditAccount(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                ApplicationUser user = await _userManager.FindByIdAsync(id);
+                if (user != null)
+                {
+                    var model = new EditAccountProfile
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Gender = user.Gender,
+                        BirthDate = user.BirthDate,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Password = user.PasswordHash,
+                        ConfirmPassword = user.PasswordHash
+                    };
+                    return View(model);
+                }
+            }
+            return RedirectToAction("Index", "Doctors");
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditAccount(EditAccountProfile model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.Id);
+                if (user != null)
+                {
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.Gender = model.Gender;
+                    user.BirthDate = model.BirthDate;
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
+                    var passwordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
+                    user.PasswordHash = passwordHash;
+                }
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    _toastNotification.AddSuccessToastMessage("Account Updated successfully.");
+                    return View("EditAccount");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View(model);
+            }
+            return View(model);
+        }
         public IActionResult AccessDenied()
         {
             return View();

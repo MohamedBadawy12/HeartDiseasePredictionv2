@@ -14,12 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\IRepo\" />
     <Folder Include="wwwroot\Images\" />
     <Folder Include="wwwroot\Upload\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Database\Database.csproj" />
+    <ProjectReference Include="..\..\Repositories\Repositories.csproj" />
   </ItemGroup>
 
 </Project>
