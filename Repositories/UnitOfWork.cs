@@ -13,6 +13,10 @@ namespace Repositories
         public IPrescriptionRepository prescriptions { get; private set; }
         public ILabRepository labs { get; private set; }
 
+        public IAppointmentRepository appointments { get; private set; }
+
+        public IAttendanceRepository attendances { get; private set; }
+
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -20,6 +24,8 @@ namespace Repositories
             Doctors = new DoctorRepository(context);
             medicalAnalysts = new MedicalAnalystRepository(context);
             reciptionists = new ReciptionistRepository(context);
+            appointments = new AppointmentRepository(context);
+            attendances = new AttendanceRepository(context);
             labs = new LabRepository(context);
             prescriptions = new PrescriptionRepository(context);
         }

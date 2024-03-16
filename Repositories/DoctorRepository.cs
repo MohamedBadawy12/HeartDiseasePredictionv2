@@ -24,9 +24,12 @@ namespace Repositories
             }
             return doctors;
         }
-        public Task<IEnumerable<Doctor>> GetAvailableDoctors()
+        public async Task<IEnumerable<Doctor>> GetAvailableDoctors()
         {
-            throw new System.NotImplementedException();
+            return await _context.Doctors
+                .Where(a => a.IsAvailable == true)
+                .Include(u => u.User)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Doctor>> GetDoctors()

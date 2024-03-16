@@ -44,12 +44,15 @@ namespace Repositories
             return await _context.Patients
             .Include(u => u.User)
             .Include(u => u.MedicalTests)
+            .Include(u => u.Appointments)
             .FirstOrDefaultAsync(d => d.UserId == userId);
         }
 
         public Task<IEnumerable<Patient>> GetRecentPatients()
         {
             throw new System.NotImplementedException();
+            //return await _context.Patients
+            //    .Where(a => DbFunctions.DiffDays(a.DateTime, DateTime.Now) == 0);
         }
 
         public Patient Get_Patient(long ssn)

@@ -24,17 +24,12 @@
                             <input asp-for="@Model.LastName" type="text" class="form-control" id="inputLastName">
                         </div>
                         <div class="form-group col-lg-3">
-                            <label asp-for="@Model.LabId" class="control-label"></label>
-                            <input asp-for="@Model.LabId" type="text" class="form-control" id="inputAddress">
+                            <label asp-for="@Model.LabId"></label>
+                            <select asp-for="@Model.LabId" class="form-control wide" id="inputLab" asp-items="ViewBag.Lab">
+                                <option value="NoSelected ">--Please Select Lab-- </option>
+                            </select>
+                            <span asp-validation-for="@Model.LabId" class="text-danger"></span>
                         </div>
-                        @*<div class="form-group col-lg-3">
-                        <label asp-for="@Model.Lab"></label>
-                        <select asp-for="@Model.Lab" class="form-control wide" id="inputLab">
-                        <option value="NoSelected ">--Please Select Lab-- </option>
-                        <option value="Heart ">Heart </option>
-                        <option value="Eyses ">Eyses </option>
-                        </select>
-                        </div>*@
                     </div>
                     <div class="form-row ">
                         <div class="form-group col-lg-3">

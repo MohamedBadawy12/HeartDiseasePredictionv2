@@ -93,7 +93,7 @@ namespace HearPrediction.Api
 			.AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-				options.JsonSerializerOptions.PropertyNamingPolicy = null; // preven
+				options.JsonSerializerOptions.PropertyNamingPolicy = null; 
 			});
 			services.AddSwaggerGen(c =>
 			{

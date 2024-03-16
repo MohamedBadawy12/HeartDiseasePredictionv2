@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Repositories.DropDownViewModel;
 
 namespace Repositories.Interfaces
 {
@@ -9,6 +10,7 @@ namespace Repositories.Interfaces
         Task<IEnumerable<Prescription>> FilterPrescriptions(long search);
         Task<Prescription> GetPrescription(int id);
         Prescription Get_Prescription(int id);
+        Task<DoctorDropDownViewMode> GetDoctorDropDownsValues();
         Task AddAsync(Prescription prescription);
         void Remove(Prescription prescription);
     }

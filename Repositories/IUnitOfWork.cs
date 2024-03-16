@@ -9,6 +9,8 @@ namespace Repositories
         IMedicalAnalystRepository medicalAnalysts { get; }
         IReciptionistRepository reciptionists { get; }
         IPrescriptionRepository prescriptions { get; }
+        IAppointmentRepository appointments { get; }
+        IAttendanceRepository attendances { get; }
         ILabRepository labs { get; }
         Task Complete();
     }

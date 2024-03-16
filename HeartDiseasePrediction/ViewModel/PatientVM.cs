@@ -24,7 +24,7 @@ namespace HeartDiseasePrediction.ViewModel
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
         [Display(Name = "Insurance Number")]
-        public int Insurance_No { get; set; }
+        public int? Insurance_No { get; set; }
         [Required(ErrorMessage = "Birth Date Is Required")]
         [Display(Name = "Birth Date")]
         public DateTime BirthDate { get; set; }
@@ -32,7 +32,7 @@ namespace HeartDiseasePrediction.ViewModel
         [Required(ErrorMessage = "Email Is Required")]
         public string Email { get; set; }
         [Display(Name = "Profile Image")]
-        public string ProfileImg { get; set; }
+        public string? ProfileImg { get; set; }
         [NotMapped]
         [Display(Name = "Upload File")]
         public IFormFile? ImageFile { get; set; }

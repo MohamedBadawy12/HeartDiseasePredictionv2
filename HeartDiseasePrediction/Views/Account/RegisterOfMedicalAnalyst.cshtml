@@ -27,14 +27,10 @@
                         </div>
                         <div class="form-group col-lg-4">
                             <label asp-for="@Model.Lab"></label>
-                            <input asp-for="@Model.Lab" type="text" class="form-control" id="inputPhone" placeholder="Enter Lab">
+                            <select asp-for="@Model.Lab" class="form-control wide" id="inputLab" asp-items="ViewBag.Lab">
+                                <option value="NoSelected ">--Please Select Lab-- </option>
+                            </select>
                             <span asp-validation-for="@Model.Lab" class="text-danger"></span>
-                            @*<label for="inputLab">Lab</label>
-                            <select name="" class="form-control wide" id="inputLab">
-                            <option value="NoSelected ">--Please Select Lab-- </option>
-                            <option value="AlMohtaber ">AlMohtaber </option>
-                            <option value="AlBorg ">AlBorg </option>
-                            </select>*@
                         </div>
                     </div>
                     <div class="form-row ">

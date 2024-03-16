@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NToastNotify;
 using Repositories;
+using Repositories.Interfaces;
 using System;
 
 namespace HeartDiseasePrediction
@@ -42,6 +43,7 @@ namespace HeartDiseasePrediction
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IFileRepository, FileRepository>();
             services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
             services.AddDistributedMemoryCache();
 

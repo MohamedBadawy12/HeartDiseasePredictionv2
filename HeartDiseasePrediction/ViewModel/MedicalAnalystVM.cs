@@ -31,7 +31,7 @@ namespace HeartDiseasePrediction.ViewModel
         [Required(ErrorMessage = "Email Is Required")]
         public string Email { get; set; }
         [Display(Name = "Profile Image")]
-        public string ProfileImg { get; set; }
+        public string? ProfileImg { get; set; }
         [NotMapped]
         [Display(Name = "Upload File")]
         public IFormFile? ImageFile { get; set; }

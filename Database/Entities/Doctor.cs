@@ -9,6 +9,12 @@ namespace Database.Entities
     {
         [Key]
         public int Id { get; set; }
+        [Display(Name = "Location")]
+        public string? Location { get; set; }
+        [Display(Name = "Name")]
+        public string? Name { get; set; }
+        [Display(Name = "Price")]
+        public string? Price { get; set; }
         public bool IsAvailable { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]

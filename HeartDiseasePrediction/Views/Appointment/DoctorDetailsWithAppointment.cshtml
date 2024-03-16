@@ -1,0 +1,89 @@
+﻿@model HeartDiseasePrediction.ViewModel.DoctorVM
+
+@{
+	ViewData["Title"] = "Doctor Details";
+}
+
+<div class="card card-body" style="margin:20px">
+    <div class="container">
+        <div class="row align-items-center position-relative" >
+            <div class="col-xl-3 col-lg-4">
+                <img src="~/images/doctor.png" width="100px" class="rounded-circle" alt="@Model.Name">
+            </div>
+            <div class="col-xl-6 col-lg-8" >
+                <h2 style="color:royalblue"><strong>Doctor Details</strong></h2>
+                <h2>
+                    @Model.FirstName @Model.LastName
+                </h2>
+                <div class="d-flex flex-row align-items-center mb-3">
+                    <div style="padding-right:10px">
+                        @*<span class="badge bg-success text-white">AVAILABLE</span>*@
+                        @if (Model.IsAvailable!=true)
+                        {
+                        <span class="badge bg-success text-white">AVAILABLE</span>
+                        }
+                        else
+                        {
+                        <span class="badge bg-danger text-white">Pending</span>
+                        }
+                    </div>
+                    <div style="padding-right:10px;">
+                        <i class="fa fa-user-md"></i>
+                        <span>@Model.Name</span>
+                    </div>
+                    <div style="padding-right:10px">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                        <span style="text-decoration:none; color:royalblue">
+                            @Model.Location
+                        </span>
+                    </div>
+                    <div style="padding-right:10px">
+                        <i class="fa fa-usd" aria-hidden="true"></i>
+                        <span style="text-decoration:none; color:royalblue">
+                            @Model.Price
+                        </span>
+                    </div>
+                    <div style="padding-right:10px">
+                        @* <i class="fa fa-usd" aria-hidden="true"></i>*@
+                        <span style="text-decoration:none;">
+                            @Model.Gender
+                        </span>
+                    </div>
+                </div>
+                <div class="align-items-center mb-6">
+                    <div style="padding-right:10px">
+                        <i class="fa fa-calendar" aria-hidden="true" style="color:limegreen"></i>
+                        @Model.BirthDate.ToString("dd MMM yy")
+                    </div>
+                    <div>
+                        <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                        <span>@Model.Email</span>
+                    </div>
+                    @* <div class="d-flex flex-row align-items-center mb-3" >
+                    @foreach (var actor in Model.Actor_Movie)
+                    {
+                    <div class="column text-center" style="padding-left:20px">
+                    <img class="border-info rounded-circle" src="@actor.Actor.ProfilePictureUrl" style="max-width: 80px" />
+                    <br>
+                    <a asp-controller="Actor" asp-action="Details" asp-route-id="@actor.ActorId"
+                    style="text-decoration:none; color:white"><b>@actor.Actor.FullName</b></a>
+                    </div>
+                    }
+                    </div>
+                    <div class="d-flex flex-row align-items-center mb-3">
+                    <a class="btn btn-success text-white @((DateTime.Now > Model.TimeDate.EndTime) ? "disabled" : "")"
+                    style="margin-right:20px"
+                    asp-controller="Order"
+                    asp-action="AddItemToShoppingCart" asp-route-id="@Model.Id"><i class="bi bi-cart-plus"></i> <b>Add to Cart (Price @Model.Price.ToString("c"))</b></a>
+                    <a class="btn btn-danger" href="@Model.Triler"><i class="bi bi-youtube"></i> <b>Watch Triler</b></a>
+                    </div>
+                    <div>
+                    <a class="btn btn-outline-primary float-right" asp-action="Index">
+                    <b>Back to List</b>
+                    </a>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,13 @@
 ﻿using Database.Entities;
 using HeartDiseasePrediction.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NToastNotify;
+using Repositories;
+using Repositories.Interfaces;
 using System;
 using System.Net.Http;
 using System.Text;
@@ -18,15 +22,20 @@ namespace HeartDiseasePrediction.Controllers
         HttpClient _client;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IFileRepository _fileRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly AppDbContext _context;
         public AccountController(IToastNotification toastNotification, UserManager<ApplicationUser> userManger,
-            SignInManager<ApplicationUser> signInManager, AppDbContext context)
+            SignInManager<ApplicationUser> signInManager, AppDbContext context, IFileRepository fileRepository,
+            IUnitOfWork unitOfWork)
         {
             _toastNotification = toastNotification;
             _client = new HttpClient();
             _client.BaseAddress = baseAddress;
             _userManager = userManger;
             _signInManager = signInManager;
+            _fileRepository = fileRepository;
+            _unitOfWork = unitOfWork;
             _context = context;
         }
         //Login
@@ -51,11 +60,11 @@ namespace HeartDiseasePrediction.Controllers
                             _toastNotification.AddSuccessToastMessage("Login Success");
                             return RedirectToAction("Index", "Home");
                         }
-                        _toastNotification.AddSuccessToastMessage("Email or Password is Incorrect");
+                        _toastNotification.AddErrorToastMessage("Email or Password is Incorrect");
                         TempData["Error"] = "Wrong credentials. please,try again!";
                         return View(loginViewModel);
                     }
-                    _toastNotification.AddSuccessToastMessage("Email or Password is Incorrect");
+                    _toastNotification.AddErrorToastMessage("Email or Password is Incorrect");
                     TempData["Error"] = "Wrong credentials. please,try again!";
                 }
                 return View(loginViewModel);
@@ -94,7 +103,7 @@ namespace HeartDiseasePrediction.Controllers
 
         public async Task<IActionResult> Resetpassword(string token, string email)
         {
-            var model = new ResetPasswordViewModel { Token = token, Email = email };
+            var model = new ResetPasswordViewModel { Code = token, Email = email };
             return View(model);
         }
         [HttpPost]
@@ -205,6 +214,9 @@ namespace HeartDiseasePrediction.Controllers
                 {
                     UserId = user.Id,
                     IsAvailable = true,
+                    Name = model.Name,
+                    Location = model.Location,
+                    Price = model.Price,
                 };
                 await _context.Doctors.AddAsync(doctor);
                 await _context.SaveChangesAsync();
@@ -213,38 +225,23 @@ namespace HeartDiseasePrediction.Controllers
             }
             _toastNotification.AddErrorToastMessage("Register Doctor Failed");
             return View(model);
-
-
-            //try
-            //{
-            //    string data = JsonConvert.SerializeObject(model);
-            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-            //        "/Account/registerDoctor", content);
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        TempData["successMesssage"] = "Doctor Created successfully.";
-            //        _toastNotification.AddSuccessToastMessage("Doctor Created successfully.");
-            //        return RedirectToAction("Index", "Doctor");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    TempData["errorMesssage"] = ex.Message;
-            //    _toastNotification.AddErrorToastMessage("Register Doctor Failed");
-            //    return View();
-            //}
-            //_toastNotification.AddErrorToastMessage("Register Doctor Failed");
-            //return View();
         }
         public async Task<IActionResult> RegisterOfMedicalAnalyst()
         {
+            var labDropDownList = await _unitOfWork.labs.GetLabDropDownsValues();
+            ViewBag.Lab = new SelectList(labDropDownList.labs, "Id", "Name");
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterOfMedicalAnalyst(RegisterMedicalAnalystVM model)
         {
+            if (!ModelState.IsValid)
+            {
+                var labDropDownList = await _unitOfWork.labs.GetLabDropDownsValues();
+                ViewBag.Lab = new SelectList(labDropDownList.labs, "Id", "Name");
+                return View(model);
+            }
             if (await _userManager.FindByEmailAsync(model.Email) is not null)
                 return View(model);
 
@@ -275,28 +272,6 @@ namespace HeartDiseasePrediction.Controllers
             }
             _toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
             return View(model);
-
-            //try
-            //{
-            //    string data = JsonConvert.SerializeObject(model);
-            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-            //        "/Account/registerMedicalAnalyst", content);
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        TempData["successMesssage"] = "Medical Analyst Created successfully.";
-            //        _toastNotification.AddSuccessToastMessage("Medical Analyst Created successfully.");
-            //        return RedirectToAction("Index", "MedicalAnalyst");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    TempData["errorMesssage"] = ex.Message;
-            //    _toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
-            //    return View();
-            //}
-            //_toastNotification.AddErrorToastMessage("Register Medical Analyst Failed");
-            //return View();
         }
         public async Task<IActionResult> RegisterOfReciptionist()
         {
@@ -336,84 +311,234 @@ namespace HeartDiseasePrediction.Controllers
             }
             _toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
             return View(model);
-            //try
-            //{
-            //    string data = JsonConvert.SerializeObject(model);
-            //    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            //    HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress +
-            //        "/Account/registerReceptionist", content);
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        TempData["successMesssage"] = "Reciptionist Created successfully.";
-            //        _toastNotification.AddSuccessToastMessage("Reciptionist Created successfully.");
-            //        return RedirectToAction("Index", "Reciptionist");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    TempData["errorMesssage"] = ex.Message;
-            //    _toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
-            //    return View();
-            //}
-            //_toastNotification.AddErrorToastMessage("Register Reciptionist Failed");
-            //return View();
         }
-        [HttpGet]
-        public async Task<IActionResult> EditAccount(string id)
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(ApplicationUser model, string code)
         {
-            if (!string.IsNullOrEmpty(id))
+            var user = await _userManager.FindByNameAsync(model.Email);
+            if (model.Id == null || code == null)
             {
-                ApplicationUser user = await _userManager.FindByIdAsync(id);
-                if (user != null)
-                {
-                    var model = new EditAccountProfile
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Gender = user.Gender,
-                        BirthDate = user.BirthDate,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        Password = user.PasswordHash,
-                        ConfirmPassword = user.PasswordHash
-                    };
-                    return View(model);
-                }
+                return View("Error");
             }
-            return RedirectToAction("Index", "Doctors");
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // POST: /Account/ForgotPassword
         [HttpPost]
-        public async Task<IActionResult> EditAccount(EditAccountProfile model)
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgetPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
+                var user = await _userManager.FindByNameAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.Gender = model.Gender;
-                    user.BirthDate = model.BirthDate;
-                    user.Email = model.Email;
-                    user.PhoneNumber = model.PhoneNumber;
-                    var passwordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
-                    user.PasswordHash = passwordHash;
+                    return View("ForgotPasswordConfirmation");
                 }
+
+                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
+                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+            }
+            return View(model);
+        }
+        [AllowAnonymous]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult ResetPassword(string code)
+        {
+            return code == null ? View("Error") : View();
+        }
+
+        //
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View();
+        }
+        // GET: /Account/ResetPasswordConfirmation
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+
+        //public string Email { get; set; }
+        //[BindProperty]
+        //public EditAccountProfile Input { get; set; }
+        //private async Task LoadAsync(ApplicationUser user)
+        //{
+        //    var email = await _userManager.GetEmailAsync(user);
+        //    var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+        //    Email = email;
+
+        //    Input = new EditAccountProfile
+        //    {
+        //        PhoneNumber = phoneNumber,
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        Gender = user.Gender,
+        //        BirthDate = user.BirthDate,
+        //        ProfileImg = user.ProfileImg
+        //    };
+        //}
+        [HttpGet]
+        public async Task<IActionResult> UpdateProfile(string userId)
+        {
+            EditAccountProfile model = new EditAccountProfile();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                model.UserId = user.Id;
+                model.Email = user.Email;
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.PhoneNumber = user.PhoneNumber;
+                model.BirthDate = user.BirthDate;
+                model.Gender = user.Gender;
+                model.ProfileImg = user.ProfileImg;
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(string userId, EditAccountProfile model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user.Email != model.Email)
+                    user.Email = model.Email;
+                if (user.FirstName != model.FirstName)
+                    user.FirstName = model.FirstName;
+                if (user.LastName != model.LastName)
+                    user.LastName = model.LastName;
+                if (user.PhoneNumber != model.PhoneNumber)
+                    user.PhoneNumber = model.PhoneNumber;
+                if (user.BirthDate != model.BirthDate)
+                    user.BirthDate = model.BirthDate;
+                if (user.Gender != model.Gender)
+                    user.Gender = model.Gender;
+                if (user.ImageFile != null)
+                {
+                    var file = _fileRepository.SaveImage(user.ImageFile);
+                    if (file.Item1 == 1)
+                    {
+                        var oldImage = user.ProfileImg;
+                        user.ProfileImg = file.Item2;
+                        await _userManager.UpdateAsync(user);
+                        var deleteResult = _fileRepository.DeleteImage(oldImage);
+                    }
+                }
+
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    _toastNotification.AddSuccessToastMessage("Account Updated successfully.");
-                    return View("EditAccount");
+                    return RedirectToAction("Index", "Home");
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
-                return View(model);
+
             }
             return View(model);
         }
+        //[HttpGet]
+        //public async Task<IActionResult> EditAccount(string id)
+        //{
+        //    if (!string.IsNullOrEmpty(id))
+        //    {
+        //        ApplicationUser user = await _userManager.FindByIdAsync(id);
+        //        if (user != null)
+        //        {
+        //            var model = new EditAccountProfile
+        //            {
+        //                Id = user.Id,
+        //                FirstName = user.FirstName,
+        //                LastName = user.LastName,
+        //                Gender = user.Gender,
+        //                BirthDate = user.BirthDate,
+        //                Email = user.Email,
+        //                PhoneNumber = user.PhoneNumber,
+        //                Password = user.PasswordHash,
+        //                ConfirmPassword = user.PasswordHash
+        //            };
+        //            return View(model);
+        //        }
+        //    }
+        //    return RedirectToAction("Index", "Doctors");
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> EditAccount(EditAccountProfile model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await _userManager.FindByIdAsync(model.Id);
+        //        if (user != null)
+        //        {
+        //            user.FirstName = model.FirstName;
+        //            user.LastName = model.LastName;
+        //            user.Gender = model.Gender;
+        //            user.BirthDate = model.BirthDate;
+        //            user.Email = model.Email;
+        //            user.PhoneNumber = model.PhoneNumber;
+        //            var passwordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
+        //            user.PasswordHash = passwordHash;
+        //        }
+        //        var result = await _userManager.UpdateAsync(user);
+        //        if (result.Succeeded)
+        //        {
+        //            _toastNotification.AddSuccessToastMessage("Account Updated successfully.");
+        //            return View("EditAccount");
+        //        }
+        //        foreach (var error in result.Errors)
+        //        {
+        //            ModelState.AddModelError("", error.Description);
+        //        }
+        //        return View(model);
+        //    }
+        //    return View(model);
+        //}
         public IActionResult AccessDenied()
         {
             return View();

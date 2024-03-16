@@ -1,5 +1,6 @@
 ﻿using Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using Repositories.DropDownViewModel;
 using Repositories.Interfaces;
 
 namespace Repositories
@@ -23,6 +24,16 @@ namespace Repositories
                 Where(x => x.PatientSSN.Equals(search)).ToListAsync();
             }
             return prescriptions;
+        }
+
+        public async Task<DoctorDropDownViewMode> GetDoctorDropDownsValues()
+        {
+            var data = new DoctorDropDownViewMode()
+            {
+                doctors = await _context.Doctors.OrderBy(a => a.User.Email)
+                /*.OrderBy(x => x.User.LastName)*/.ToListAsync(),
+            };
+            return data;
         }
 
         public async Task<Prescription> GetPrescription(int id) =>

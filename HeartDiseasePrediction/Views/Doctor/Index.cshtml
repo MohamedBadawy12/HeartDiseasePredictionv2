@@ -49,8 +49,9 @@
 						<thead>
 							<tr class="text-center bg-dark text-light">
 								<th>#</th>
-								<th>FirstName</th>
-								<th>LastName</th>
+								@*<th>Doctor Name</th>*@
+								<th>First Name</th>
+								<th>Last Name</th>
 								<th>Email</th>
 								@*<th>Gender</th>*@
 								<th>Age</th>
@@ -76,6 +77,9 @@
 									<td class="align-middle text-center">
 										@item.Id
 									</td>
+									@*<td class="align-middle text-center">
+										@item.Name
+									</td>*@
 									<td class="align-middle text-center">
 										@item.User.FirstName
 									</td>
