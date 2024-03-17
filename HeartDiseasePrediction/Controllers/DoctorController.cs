@@ -45,6 +45,13 @@ namespace HeartDiseasePrediction.Controllers
             var doctors = await _unitOfWork.Doctors.GetDoctors();
             return View(doctors);
         }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> DoctorsList(string search)
+        {
+            var doctors = await _unitOfWork.Doctors.FilterDoctors(search);
+            return View(doctors);
+        }
         //get doctor details
         public async Task<IActionResult> DoctorDetails(int id)
         {

@@ -20,7 +20,7 @@ namespace Repositories
             if (!string.IsNullOrEmpty(search))
             {
                 doctors = await _context.Doctors.
-                Where(x => x.User.FirstName.Contains(search) || x.User.LastName.Contains(search)).ToListAsync();
+                Where(x => x.Name.Contains(search) || x.User.FirstName.Contains(search) || x.User.LastName.Contains(search)).ToListAsync();
             }
             return doctors;
         }
