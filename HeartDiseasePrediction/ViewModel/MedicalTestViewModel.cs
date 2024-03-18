@@ -22,7 +22,7 @@ namespace HeartDiseasePrediction.ViewModel
         public float Prevalenthypertension { get; set; }
         [Required, Display(Name = "Diabetes")]
         public float Diabetes { get; set; }
-        [Required, Display(Name = "Cholestero lLevel")]
+        [Required, Display(Name = "Cholesterol Level")]
         public float CholesterolLevel { get; set; }
         [Required, Display(Name = "Systolic Blood Pressure")]
         public float SystolicBloodPressure { get; set; }
@@ -30,7 +30,7 @@ namespace HeartDiseasePrediction.ViewModel
         public float DiastolicBloodPressure { get; set; }
         [Required, Display(Name = "BMI")]
         public float BMI { get; set; }
-        [Required, Display(Name = "GlucoseLevel")]
+        [Required, Display(Name = "Glucose Level")]
         public float GlucoseLevel { get; set; }
     }
 }

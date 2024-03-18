@@ -75,14 +75,56 @@
                             <i class="lni lni-user"></i>
                             <span>Profile</span>
                         </a>
-                   }
+                    }
                 </li>
-                <li class="sidebar-item">
-                    <a asp-action="Index" asp-controller="Prescription" class="sidebar-link">
-                        <i class="lni lni-agenda"></i>
-                        <span>Prescriptions</span>
-                    </a>
-                </li>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Doctor"))
+                {
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Prescription" class="sidebar-link">
+                            <i class="lni lni-agenda"></i>
+                            <span>Prescriptions</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Appointment" class="sidebar-link">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                {
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Prescription" class="sidebar-link">
+                            <i class="lni lni-agenda"></i>
+                            <span>Prescriptions</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Appointment" class="sidebar-link">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                }
+                @if (User.Identity.IsAuthenticated && User.IsInRole("MedicalAnalyst"))
+                {
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                           data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
+                            <i class="lni lni-clipboard"></i>
+                            <span>Medical Tests</span>
+                        </a>
+                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a asp-controller="MedicalTests" asp-action="Index" class="sidebar-link"><i class="lni lni-menu"></i> Medical Tests</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a asp-controller="MedicalTests" asp-action="Create" class="sidebar-link"><i class="lni lni-clipboard"></i> Add Medical Test</a>
+                            </li>
+                        </ul>
+                    </li>
+                }
                 @*<li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
@@ -98,62 +140,64 @@
                         </li>
                     </ul>
                 </li>*@
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                       data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
-                        <i class="lni lni-cog"></i>
-                       @* <i class="fa fa-gear"></i>*@
-                        <span>Management</span>
-                    </a>
-                    <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
-                               data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
-                               Add Staff
-                            </a>
-                            <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
-                                <li class="sidebar-item">
-                                    <a asp-controller="Account" asp-action="RegisterOfDoctor" class="sidebar-link"><i class="fa fa-user-md"></i> Doctor</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a asp-controller="Account" asp-action="RegisterOfMedicalAnalyst" class="sidebar-link"><i class="fa fa-user"></i> Medical Analyst</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a asp-controller="Account" asp-action="RegisterOfReciptionist" class="sidebar-link"><i class="fa fa-user"></i> Reciptionist</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
-                               data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
-                                List Of Staff
-                            </a>
-                            <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
-                                <li class="sidebar-item">
-                                    <a asp-controller="Doctor" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book-o"></i> Doctor</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a asp-controller="MedicalAnalyst" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i>Medical Analyst</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a asp-controller="Reciptionist" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i> Reciptionist</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a asp-controller="Patient" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i> Patient</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-item">
-                    <a asp-action="Index" asp-controller="Lab" class="sidebar-link">
-                        <i class="lni lni-popup"></i>
-                        <span>Laboratory</span>
-                    </a>
-                </li>
-                
+                @if(User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                           data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
+                            <i class="lni lni-cog"></i>
+                            @* <i class="fa fa-gear"></i>*@
+                            <span>Management</span>
+                        </a>
+                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
+                                   data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
+                                    Add Staff
+                                </a>
+                                <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Account" asp-action="RegisterOfDoctor" class="sidebar-link"><i class="fa fa-user-md"></i> Doctor</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Account" asp-action="RegisterOfMedicalAnalyst" class="sidebar-link"><i class="fa fa-user"></i> Medical Analyst</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Account" asp-action="RegisterOfReciptionist" class="sidebar-link"><i class="fa fa-user"></i> Reciptionist</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a href="#" class="sidebar-link collapsed" data-bs-toggle="collapse"
+                                   data-bs-target="#multi-two" aria-expanded="false" aria-controls="multi-two">
+                                    List Of Staff
+                                </a>
+                                <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Doctor" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book-o"></i> Doctor</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a asp-controller="MedicalAnalyst" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i>Medical Analyst</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Reciptionist" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i> Reciptionist</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a asp-controller="Patient" asp-action="Index" class="sidebar-link"><i class="fa fa-address-book"></i> Patient</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="Lab" class="sidebar-link">
+                            <i class="lni lni-sthethoscope"></i>
+                            <span>Laboratory</span>
+                        </a>
+                    </li>
+                }
             </ul>
             @*<div class="sidebar-footer">
                 <a href="#" class="sidebar-link">

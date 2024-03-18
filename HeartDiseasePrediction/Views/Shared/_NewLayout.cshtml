@@ -17,6 +17,15 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
 	<link href="~/css/style.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css">
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css">*@
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.css">*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.js"></script>
+
+	@*<link href="~/css/Style3.css" rel="stylesheet" />*@
 	<link href="~/css/responsive.css" rel="stylesheet" />
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
@@ -104,6 +113,24 @@
                                     {
                                         <li class="nav-item">
                                             <a class="nav-link" asp-controller="Account" asp-action="RegisterOfDoctor"> Dashboard</a>
+                                        </li>
+                                    }
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Prescription" asp-action="Index"> Dashboard</a>
+                                        </li>
+                                    }
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Doctor"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Prescription" asp-action="Index"> Dashboard</a>
+                                        </li>
+                                    }
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("MedicalAnalyst"))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="MedicalTests" asp-action="Create"> Dashboard</a>
                                         </li>
                                     }
                                     <li class="nav-item">
@@ -292,6 +319,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
         <script src="~/js/custom.js"></script>
+       @* <script src="~/js/custom2.js"></script>*@
         @await RenderSectionAsync("Scripts", required: false)
         @await Component.InvokeAsync("NToastNotify")
     </div>
