@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NToastNotify;
 using Repositories;
+using Repositories.ViewModel;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HeartDiseasePrediction.Controllers
@@ -22,10 +24,20 @@ namespace HeartDiseasePrediction.Controllers
             _unitOfWork = unitOfWork;
             _context = context;
         }
-        //Get All Prescriptions
+        //Get All Prescriptions By User ID
         public async Task<IActionResult> Index()
         {
-            var prescriptions = await _unitOfWork.prescriptions.GetPrescriptions();
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
+            var prescriptions = await _unitOfWork.prescriptions.GetPrescriptionByUserId(userId, userRole);
+            return View(prescriptions);
+        }
+        //Get All Prescriptions
+        public async Task<IActionResult> GetPrescriptions()
+        {
+            string PatientEmail = User.FindFirstValue(ClaimTypes.Email);
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
+            var prescriptions = await _unitOfWork.prescriptions.GetPrescriptionByEmail(PatientEmail, userRole);
             return View(prescriptions);
         }
         //Search for Prescriptions
@@ -50,6 +62,10 @@ namespace HeartDiseasePrediction.Controllers
                     MedicineName = prescription.MedicineName,
                     PatientSSN = prescription.PatientSSN,
                     date = prescription.date,
+                    ApDoctorId = prescription.ApDoctorId,
+                    PatientID = prescription.PatientID,
+                    DoctorEmail = prescription.DoctorEmail,
+                    PatientEmail = prescription.PatientEmail,
                     DoctorId = prescription.DoctorId,
                     //Doctor = prescription.Doctor,
                 };
@@ -65,35 +81,25 @@ namespace HeartDiseasePrediction.Controllers
         //Create Prescriptions
         public async Task<IActionResult> Create()
         {
-            //var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
-            //ViewBag.Lab = new SelectList(doctorDropDownList.doctors, "Id", "Email");
+            var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
+            ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Prescription model)
+        public async Task<IActionResult> Create(PrescriptionViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                //var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
-                //ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Email");
-                return View(model);
-            }
-
-            var doctor = await _unitOfWork.Doctors.GetDoctor(model.DoctorId);
-            if (doctor == null)
-                return View("NotFound");
-
-            var patient = await _unitOfWork.Patients.GetPatient(model.PatientSSN);
-            if (patient == null)
-                return View("NotFound");
-
             try
             {
-                //await _prescriptionService.AddAsync(model);
-                await _unitOfWork.prescriptions.AddAsync(model);
-                doctor.prescriptions.Add(model);
-                patient.Prescriptions.Add(model);
-                await _unitOfWork.Complete();
+                var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
+                ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
+                var patient = await _unitOfWork.Patients.GetPatient(model.PatientSSN);
+                if (patient == null)
+                    return View("NotFound");
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
+                model.ApDoctorId = userId;
+                model.DoctorEmail = doctorEmail;
+                await _unitOfWork.prescriptions.AddPrescriptionAsync(model);
                 _toastNotification.AddSuccessToastMessage("Prescription Created successfully");
                 return View("CompletedSuccessfully");
             }
@@ -114,12 +120,17 @@ namespace HeartDiseasePrediction.Controllers
                 var prescription = await _unitOfWork.prescriptions.GetPrescription(id);
                 if (prescription == null)
                     return View("NotFound");
-
+                var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
+                ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
                 var prescriptionVM = new Prescription
                 {
                     MedicineName = prescription.MedicineName,
                     PatientSSN = prescription.PatientSSN,
                     date = prescription.date,
+                    ApDoctorId = prescription.ApDoctorId,
+                    PatientID = prescription.PatientID,
+                    DoctorEmail = prescription.DoctorEmail,
+                    PatientEmail = prescription.PatientEmail,
                     DoctorId = prescription.DoctorId,
                     //Doctor = prescription.Doctor,
                 };
@@ -142,26 +153,21 @@ namespace HeartDiseasePrediction.Controllers
                 if (prescription == null)
                     return View("NotFound");
 
-                if (!ModelState.IsValid)
-                {
-                    var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
-                    ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Email");
-                    return View(model);
-                }
-                //string wwwRootPath = _webHostEnvironment.WebRootPath;
-                //string fileName = Path.GetFileNameWithoutExtension(model.ImageFile.FileName);
-                //string extension = Path.GetExtension(model.ImageFile.FileName);
-                //model.ProfileImg = fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
-                //string path = Path.Combine(wwwRootPath + "/Upload", fileName);
-
-                //using (var fileStream = new FileStream(path, FileMode.Create))
+                //if (!ModelState.IsValid)
                 //{
-                //    await model.ImageFile.CopyToAsync(fileStream);
+                //    var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
+                //    ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Email");
+                //    return View(model);
                 //}
+                var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
+                ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
                 prescription.MedicineName = model.MedicineName;
                 prescription.PatientSSN = model.PatientSSN;
                 prescription.date = model.date;
                 prescription.DoctorId = model.DoctorId;
+                prescription.ApDoctorId = model.ApDoctorId;
+                prescription.DoctorEmail = model.DoctorEmail;
+                prescription.PatientEmail = model.PatientEmail;
                 //prescription.Doctor = model.Doctor;
 
                 _context.Prescriptions.Update(prescription);

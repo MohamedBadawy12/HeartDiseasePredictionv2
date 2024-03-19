@@ -1,14 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace HearPrediction.Api.DTO
+namespace Repositories.ViewModel
 {
-	public class PrescriptionFormDTO
+	public class PrescriptionViewModel
 	{
 		public int Id { get; set; }
 		[Required, Display(Name = "Mecdicine Name")]
 		public string MedicineName { get; set; }
-		public DateTime Date { get; set; }
+		public DateTime date { get; set; }
 		public string DoctorEmail { get; set; }
 		[Display(Name = "Patient Email")]
 		public string PatientEmail { get; set; }
@@ -17,9 +16,9 @@ namespace HearPrediction.Api.DTO
 		[Display(Name = "Patient SSN")]
 		public long PatientSSN { get; set; }
 		public int DoctorId { get; set; }
-		public PrescriptionFormDTO()
+		public PrescriptionViewModel()
 		{
-			Date = DateTime.Now;
+			date = DateTime.Now;
 		}
 	}
 }

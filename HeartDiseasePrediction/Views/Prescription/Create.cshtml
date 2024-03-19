@@ -1,4 +1,4 @@
-﻿@model Database.Entities.Prescription
+﻿@model Repositories.ViewModel.PrescriptionViewModel
 
 @{
     ViewData["Title"] = "Create Prescription Page";
@@ -21,8 +21,20 @@
                             <span asp-validation-for="@Model.PatientSSN" class="text-danger"></span>
                         </div>
                         <div class="form-group col-lg-4">
+                            <label asp-for="@Model.PatientEmail" class="control-label"></label>
+                            <input asp-for="@Model.PatientEmail" type="text" class="form-control" id="inputDoctorEmail" placeholder="Enter Patient Email">
+                            <span asp-validation-for="@Model.PatientEmail" class="text-danger"></span>
+                        </div>
+                        @*<div class="form-group col-lg-4">
                             <label asp-for="@Model.DoctorId" class="control-label"></label>
-                            <input asp-for="@Model.DoctorId" type="text" class="form-control" id="inputFullName" placeholder="Enter Doctor ID">
+                            <input asp-for="@Model.DoctorId" type="number" class="form-control" id="inputDoctorId" placeholder="Enter Doctor ID">
+                            <span asp-validation-for="@Model.DoctorId" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group col-lg-4">
+                            <label asp-for="@Model.DoctorId">Doctor Name</label>
+                            <select asp-for="@Model.DoctorId" class="form-control wide" id="inputDoctor" asp-items="ViewBag.Doctor">
+                                <option value="NoSelected ">--Please Select Doctor-- </option>
+                            </select>
                             <span asp-validation-for="@Model.DoctorId" class="text-danger"></span>
                         </div>
                         @*<div class="form-group col-lg-4">

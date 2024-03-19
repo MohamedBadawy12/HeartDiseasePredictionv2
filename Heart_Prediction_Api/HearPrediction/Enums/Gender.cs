@@ -1,8 +1,8 @@
-﻿namespace HearPrediction.Api.Enums
-{
-	public enum Gender
-	{
-		Male,
-		Female
-	}
-}
+﻿//namespace HearPrediction.Api.Enums
+//{
+//	public enum Gender
+//	{
+//		Male,
+//		Female
+//	}
+//}

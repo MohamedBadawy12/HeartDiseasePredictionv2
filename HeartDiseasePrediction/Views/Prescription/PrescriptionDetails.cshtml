@@ -79,12 +79,48 @@
         <div class="col-md-8 offset-2">
             <div class="card mb-3">
                 <div class="card-body">
+                   @* <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Pateint Name</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.Patientt.FirstName @Model.Patientt.LastName
+                        </div>
+                    </div>
+                    <hr>*@
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Pateint Email</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.PatientEmail
+                        </div>
+                    </div>
+                    <hr>
                     <div class="row">
                         <div class="col-sm-3">
                             <h6 class="mb-0">Pateint SSN</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
                             @Model.PatientSSN
+                        </div>
+                    </div>
+                    <hr>
+                    @*<div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Doctor</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.Doctorr.FirstName @Model.Doctorr.LastName
+                        </div>
+                    </div>
+                    <hr>*@
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Doctor Email</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            @Model.DoctorEmail
                         </div>
                     </div>
                     <hr>
@@ -102,7 +138,7 @@
                             <h6 class="mb-0">Date</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
-                            @Model.date
+                            @Model.date.ToString("dd MMM yy")
                         </div>
                     </div>
                     <hr>

@@ -1,4 +1,4 @@
-﻿using HearPrediction.Api.Enums;
+﻿using Database.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 

@@ -183,18 +183,6 @@
                         <span>@Model.Name</span>
                     </div>
                     <div style="padding-right:10px">
-                        <i class="fa fa-map-marker" aria-hidden="true"></i>
-                        <span style="text-decoration:none; color:royalblue">
-                            @Model.Location
-                        </span>
-                    </div>
-                    <div style="padding-right:10px">
-                        <i class="fa fa-usd" aria-hidden="true"></i>
-                        <span style="text-decoration:none; color:royalblue">
-                            @Model.Price
-                        </span>
-                    </div>
-                    <div style="padding-right:10px">
                         @* <i class="fa fa-usd" aria-hidden="true"></i>*@
                         <span style="text-decoration:none;">
                             @Model.Gender
@@ -202,6 +190,18 @@
                     </div>
                 </div>
                 <div class="align-items-center mb-6">
+                    <div style="padding-right:15px">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                        <span style="text-decoration:none; color:royalblue">
+                            @Model.Location
+                        </span>
+                    </div>
+                    <div style="padding-right:15px">
+                        <i class="fa fa-usd" aria-hidden="true"></i> Fee:
+                        <span style="text-decoration:none; color:royalblue">
+                            @Model.Price EGP
+                        </span>
+                    </div>
                     <div style="padding-right:10px">
                         <i class="fa fa-calendar" aria-hidden="true" style="color:limegreen"></i>
                         @Model.BirthDate.ToString("dd MMM yy")

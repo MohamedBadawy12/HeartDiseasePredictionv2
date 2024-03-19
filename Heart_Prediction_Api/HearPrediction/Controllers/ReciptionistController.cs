@@ -44,7 +44,7 @@ namespace HearPrediction.Api.Controllers
 				LastName = reciptionist.User.LastName,
 				BirthDate = reciptionist.User.BirthDate,
 				Email = reciptionist.User.Email,
-				Gender = (Enums.Gender)reciptionist.User.Gender,
+				Gender = reciptionist.User.Gender,
 				PhoneNumber = reciptionist.User.PhoneNumber,
 				ProfileImg = reciptionist.User.ProfileImg,
 			};

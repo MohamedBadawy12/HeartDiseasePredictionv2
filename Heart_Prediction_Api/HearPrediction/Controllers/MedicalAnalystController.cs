@@ -53,7 +53,7 @@ namespace HearPrediction.Api.Controllers
 				BirthDate = medicalAnalyst.User.BirthDate,
 				Email = medicalAnalyst.User.Email,
 				PhoneNumber = medicalAnalyst.User.PhoneNumber,
-				Gender = (Enums.Gender)medicalAnalyst.User.Gender,
+				Gender = medicalAnalyst.User.Gender,
 				ProfileImg = medicalAnalyst.User.ProfileImg,
 				LabId = medicalAnalyst.LabId,
 			};

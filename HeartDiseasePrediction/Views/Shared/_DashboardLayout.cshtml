@@ -95,7 +95,7 @@
                 @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
                     <li class="sidebar-item">
-                        <a asp-action="Index" asp-controller="Prescription" class="sidebar-link">
+                        <a asp-action="GetPrescriptions" asp-controller="Prescription" class="sidebar-link">
                             <i class="lni lni-agenda"></i>
                             <span>Prescriptions</span>
                         </a>

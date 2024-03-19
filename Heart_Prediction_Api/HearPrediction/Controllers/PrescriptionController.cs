@@ -1,10 +1,11 @@
-﻿using Database.Entities;
-using HearPrediction.Api.DTO;
+﻿using HearPrediction.Api.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
+using Repositories.ViewModel;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HearPrediction.Api.Controllers
@@ -19,16 +20,28 @@ namespace HearPrediction.Api.Controllers
 		{
 			_unitOfWork = unitOfWork;
 		}
-		//Get All Prescriptions from db
-		[HttpGet]
-		public async Task<IActionResult> GetAllPrescriptions()
+		//Get All Prescriptions By UserID
+		[HttpGet()]
+		public async Task<IActionResult> GetAllPrescriptionsByUserId()
 		{
-			var result = await _unitOfWork.prescriptions.GetPrescriptions();
-			return Ok(result);
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string userRole = User.FindFirstValue(ClaimTypes.Role);
+			var prescriptions = await _unitOfWork.prescriptions.GetPrescriptionByUserId(userId, userRole);
+			return Ok(prescriptions);
 		}
-
+		//Get All Prescriptions By Email
+		[Authorize(Roles = "User")]
+		[HttpGet("GetAllPrescriptionsByEmail")]
+		public async Task<IActionResult> GetAllPrescriptionsByEmail()
+		{
+			string PatientEmail = User.FindFirstValue(ClaimTypes.Email);
+			string userRole = User.FindFirstValue(ClaimTypes.Role);
+			var prescriptions = await _unitOfWork.prescriptions.GetPrescriptionByEmail(PatientEmail, userRole);
+			return Ok(prescriptions);
+		}
 		//Get Prescription from db
 		[HttpGet("id")]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetPrescription(int id)
 		{
 			var result = await _unitOfWork.prescriptions.GetPrescription(id);
@@ -48,7 +61,7 @@ namespace HearPrediction.Api.Controllers
 				DoctorId = prescription.DoctorId,
 				PatientSSN = prescription.PatientSSN,
 				MedicineName = prescription.MedicineName,
-				date = prescription.date
+				Date = prescription.date
 			};
 			return Ok(PrescriptionrDetail);
 		}
@@ -81,7 +94,7 @@ namespace HearPrediction.Api.Controllers
 
 		//Create a Prescription and save it in db
 		[HttpPost("Create")]
-		public async Task<IActionResult> CreatePrescription([FromBody] PrescriptionFormDTO model)
+		public async Task<IActionResult> CreatePrescription([FromBody] PrescriptionViewModel model)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -94,21 +107,28 @@ namespace HearPrediction.Api.Controllers
 			if (patient == null)
 				return BadRequest("Patient not Found");
 
-			var prescription = new Prescription()
-			{
-				DoctorId = model.DoctorId,
-				PatientSSN = model.PatientSSN,
-				date = model.date,
-				MedicineName = model.MedicineName,
-			};
+			//var prescription = new Prescription()
+			//{
+			//	DoctorId = model.DoctorId,
+			//	PatientSSN = model.PatientSSN,
+			//	date = model.Date,
+			//	MedicineName = model.MedicineName,
+			//	DoctorEmail = model.DoctorEmail,
+			//	PatientEmail = model.PatientEmail,
+			//	ApDoctorId = model.ApDoctorId,
+			//	PatientID = model.PatientID,
+			//};
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
+			model.ApDoctorId = userId;
+			model.DoctorEmail = doctorEmail;
+			await _unitOfWork.prescriptions.AddPrescriptionAsync(model);
+			//await _unitOfWork.Complete();
 
-			await _unitOfWork.prescriptions.AddAsync(prescription);
-			await _unitOfWork.Complete();
-
-			doctor.prescriptions.Add(prescription);
-			patient.Prescriptions.Add(prescription);
-			await _unitOfWork.Complete();
-			return Ok(prescription);
+			//doctor.prescriptions.Add(prescription);
+			//patient.Prescriptions.Add(prescription);
+			//await _unitOfWork.Complete();
+			return Ok(model);
 		}
 
 
@@ -124,8 +144,12 @@ namespace HearPrediction.Api.Controllers
 
 				prescription.DoctorId = model.DoctorId;
 				prescription.PatientSSN = model.PatientSSN;
-				prescription.date = model.date;
+				prescription.date = model.Date;
 				prescription.MedicineName = model.MedicineName;
+				prescription.ApDoctorId = model.ApDoctorId;
+				prescription.PatientID = model.PatientID;
+				prescription.DoctorEmail = model.DoctorEmail;
+				prescription.PatientEmail = model.PatientEmail;
 				await _unitOfWork.Complete();
 				return Ok(prescription);
 			}

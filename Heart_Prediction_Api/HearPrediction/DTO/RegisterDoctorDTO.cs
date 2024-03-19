@@ -1,4 +1,4 @@
-﻿using HearPrediction.Api.Enums;
+﻿using Database.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,6 +12,12 @@ namespace HearPrediction.Api.DTO
 		[Display(Name = "Last Name"), StringLength(100)]
 		[Required(ErrorMessage = "Last Name Is Required")]
 		public string LastName { get; set; }
+		[Display(Name = "Location"), StringLength(100)]
+		public string? Location { get; set; }
+		[Display(Name = "Name"), StringLength(150)]
+		public string? Name { get; set; }
+		[Display(Name = "Price")]
+		public string? Price { get; set; }
 		[Display(Name = "Gender")]
 		[Required(ErrorMessage = "Gender Is Required")]
 		public Gender Gender { get; set; }
