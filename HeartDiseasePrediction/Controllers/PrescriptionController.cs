@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using HeartDiseasePrediction.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -57,17 +58,16 @@ namespace HeartDiseasePrediction.Controllers
                 if (prescription == null)
                     return View("NotFound");
 
-                var prescriptionVM = new Prescription
+                var prescriptionVM = new PrescriptionVM
                 {
                     MedicineName = prescription.MedicineName,
                     PatientSSN = prescription.PatientSSN,
                     date = prescription.date,
                     ApDoctorId = prescription.ApDoctorId,
-                    PatientID = prescription.PatientID,
                     DoctorEmail = prescription.DoctorEmail,
                     PatientEmail = prescription.PatientEmail,
                     DoctorId = prescription.DoctorId,
-                    //Doctor = prescription.Doctor,
+                    DoctorName = prescription.Doctor.Name,
                 };
                 return View(prescriptionVM);
             }
@@ -128,7 +128,7 @@ namespace HeartDiseasePrediction.Controllers
                     PatientSSN = prescription.PatientSSN,
                     date = prescription.date,
                     ApDoctorId = prescription.ApDoctorId,
-                    PatientID = prescription.PatientID,
+                    //PatientID = prescription.PatientID,
                     DoctorEmail = prescription.DoctorEmail,
                     PatientEmail = prescription.PatientEmail,
                     DoctorId = prescription.DoctorId,

@@ -8,13 +8,13 @@ namespace Database.Entities
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
-        public virtual DbSet<Attendance> Attendances { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
         public virtual DbSet<MedicalAnalyst> MedicalAnalysts { get; set; }
         public virtual DbSet<MedicalTest> MedicalTests { get; set; }
         public virtual DbSet<Prediction> Predictions { get; set; }
         public virtual DbSet<Reciptionist> Reciptionists { get; set; }
         public virtual DbSet<Lab> Labs { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 

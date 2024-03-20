@@ -86,11 +86,17 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a asp-action="Index" asp-controller="Appointment" class="sidebar-link">
+                        <a asp-action="GetAppointmentByEmail" asp-controller="Appointment" class="sidebar-link">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                             <span>Appointments</span>
                         </a>
                     </li>
+                   @* <li class="sidebar-item">
+                        <a asp-action="GetMessageById" asp-controller="Appointment" class="sidebar-link">
+                            <i class="lni lni-popup"></i>
+                            <span>Messages</span>
+                        </a>
+                    </li>*@
                 }
                 @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                 {
@@ -104,6 +110,12 @@
                         <a asp-action="Index" asp-controller="Appointment" class="sidebar-link">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                             <span>Appointments</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a asp-action="GetMessagetByEmail" asp-controller="Appointment" class="sidebar-link">
+                            <i class="fa fa-bell-o" aria-hidden="true"></i>
+                            <span>Notifications</span>
                         </a>
                     </li>
                 }

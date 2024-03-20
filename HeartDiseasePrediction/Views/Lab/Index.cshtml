@@ -63,8 +63,7 @@
 							@foreach (var item in Model)
 							{
 								<tr>
-									<td class="align-middle text-center">
-										@item.Id
+									<td class="align-middle text-center counterColumn">
 									</td>
 									<td class="align-middle text-center">
 										@item.Name
@@ -93,5 +92,12 @@
 		if (accept == false) {
 			event.preventDefault();
 		}
-	}
+	} 
+	document.addEventListener("DOMContentLoaded", function () {
+		var counterCells = document.querySelectorAll(".counterColumn");
+		var counter = 1;
+		counterCells.forEach(function (cell) {
+			cell.textContent = counter++;
+		});
+	});
 </script>

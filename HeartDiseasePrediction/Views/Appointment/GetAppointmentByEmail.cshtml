@@ -8,8 +8,16 @@
 	.card {
 		box-shadow: 0px 4px 8px 0px #7986CB;
 	}
+
+/*	#myButton {
+		display: block;
+	}
+
+	.hidden {
+		display: none;
+	}*/
 </style>
-<section class="card card-body bg-light " style="margin:30px 20px">
+<section class="card card-body bg-light " style="margin:30px 40px">
 	<div class="container mt-4">
 		<div class="row">
 			<div class="col-md-10 offset-md-1">
@@ -24,7 +32,7 @@
 				</div>
 				<div class="form-inline justify-content-end my-2 my-lg-1 d-flex">
 					<div>
-						@using (Html.BeginForm("Index", "Appointment", FormMethod.Post))
+						@using (Html.BeginForm("GetAppointmentByEmail", "Appointment", FormMethod.Post))
 						{
 							@Html.TextBox("search",null,new{@class="form-control",placeholder="Search here...",style="margin:5px 0px 5px 5px"})
 							<button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> </button>
@@ -43,11 +51,11 @@
 						<thead>
 							<tr class="text-center bg-dark text-light">
 								<th>#</th>
-								<th>Doctor</th>
+								<th>Patient</th>
 								<th>Date</th>
 								<th>Time</th>
 								<th>Phone</th>
-								<th>SSN</th>
+								@*<th>SSN</th>*@
 								@*@if (User.Identity.IsAuthenticated && User.IsInRole("User"))
 								{
 									<th>Doctor</th>
@@ -73,7 +81,7 @@
 									<td class="align-middle text-center counterColumn">
 									</td>
 									<td class="align-middle text-center">
-										@item.Doctor.Name
+										@item.PateintName
 									</td>
 									<td class="align-middle text-center">
 										@item.date.ToString("dd MMM yy")
@@ -84,13 +92,14 @@
 									<td class="align-middle text-center">
 										@item.PhoneNumber
 									</td>
-									<td class="align-middle text-center">
+								@*	<td class="align-middle text-center">
 										@item.PatientSSN
-									</td>
-									@if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+									</td>*@
+									@if (User.Identity.IsAuthenticated && User.IsInRole("Doctor"))
 									{
-										<td class="align-middle text-center">
-											<a class="btn btn-outline-danger" asp-controller="Appointment" asp-action="CancelAppointment" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+										<td class="align-middle text-center" >
+											<a class="btn btn-success" id="myButton" asp-controller="Appointment" asp-action="AcceptsAppointment" asp-route-id="@item.Id" onclick="hideButton()"><i class="fa fa-check" aria-hidden="true"></i> Accept</a> |
+											<a class="btn btn-danger" asp-controller="Appointment" asp-action="CancelAppointment" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
 										</td>
 									}
 								</tr>
@@ -117,4 +126,21 @@
 			cell.textContent = counter++;
 		});
 	});
+
+	function hideButton() {
+		var button = document.getElementById('myButton');
+		button.classList.add('hidden'); // Add 'hidden' class to the button
+
+		// Save state to localStorage
+		localStorage.setItem('buttonHidden', true);
+	}
+
+	// Check if button was previously hidden and hide it accordingly
+	window.onload = function () {
+		var isButtonHidden = localStorage.getItem('buttonHidden');
+		if (isButtonHidden) {
+			var button = document.getElementById('myButton');
+			button.classList.add('hidden');
+		}
+	}
 </script>

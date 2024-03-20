@@ -75,8 +75,7 @@
 									@*<td class="align-middle text-center">
 							<img class="rounded-circle" src="@item.ProfileImg" alt="@item.FullName" style="max-width:150px">
 							</td>*@
-									<td class="align-middle text-center">
-										@item.Id
+									<td class="align-middle text-center counterColumn">
 									</td>
 									<td class="align-middle text-center">
 										@item.User.Email
@@ -136,4 +135,11 @@
 			event.preventDefault();
 		}
 	}
+	document.addEventListener("DOMContentLoaded", function () {
+		var counterCells = document.querySelectorAll(".counterColumn");
+		var counter = 1;
+		counterCells.forEach(function (cell) {
+			cell.textContent = counter++;
+		});
+	});
 </script>

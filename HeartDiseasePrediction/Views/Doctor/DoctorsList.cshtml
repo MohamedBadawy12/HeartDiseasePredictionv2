@@ -308,7 +308,8 @@
                                     </div>
                                 </div>
                                 <div class="job-right my-4 flex-shrink-0">
-                                    <a asp-controller="Appointment" asp-action="DoctorDetailsWithAppointment" asp-route-id="@item.Id" class="btn btn-outline-primary">Book Now</a>
+                                   @* <a asp-controller="Appointment" asp-action="DoctorDetailsWithAppointment" asp-route-id="@item.Id" class="btn btn-outline-primary">Book Now</a>*@
+                                    <a asp-controller="Appointment" asp-action="Create" asp-route-id="@item.Id" class="btn btn-outline-primary">Book Now</a>
                                 </div>
                             </div>
                         </div>

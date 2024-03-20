@@ -20,7 +20,6 @@ namespace Database.Entities
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<Prescription> Prescriptions { get; set; }
         public virtual ICollection<MedicalTest> MedicalTests { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
         public Patient()
         {
             Appointments = new Collection<Appointment>();

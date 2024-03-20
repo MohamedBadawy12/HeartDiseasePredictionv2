@@ -10,7 +10,6 @@ namespace Repositories
         IReciptionistRepository reciptionists { get; }
         IPrescriptionRepository prescriptions { get; }
         IAppointmentRepository appointments { get; }
-        IAttendanceRepository attendances { get; }
         ILabRepository labs { get; }
         Task Complete();
     }

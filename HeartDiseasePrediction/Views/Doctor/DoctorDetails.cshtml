@@ -8,7 +8,7 @@
         margin-top: 20px;
         color: #1a202c;
         text-align: left;
-        background-color: #e2e8f0;
+        background-color: white;
     }
 
     .main-body {
@@ -16,7 +16,8 @@
     }
 
     .card {
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
+       /* box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);*/
+        box-shadow: 0px 4px 8px 0px #7986CB;
     }
 
     .card {
@@ -161,7 +162,7 @@
                             <h6 class="mb-0">Birth Date</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
-                            @Model.BirthDate.ToString("dd MMM yy")
+                            @Model.BirthDate.ToString("dd MMMM yyyy")
                         </div>
                     </div>
                     <hr>
@@ -182,7 +183,6 @@
                             @Model.Gender
                         </div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>

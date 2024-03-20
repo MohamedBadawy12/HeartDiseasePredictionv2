@@ -2,24 +2,22 @@
 
 namespace Repositories.ViewModel
 {
-	public class PrescriptionViewModel
+	public class AppointmentViewModel
 	{
 		public int Id { get; set; }
-		[Required, Display(Name = "Mecdicine Name")]
-		public string MedicineName { get; set; }
+		[Required, Display(Name = "Date")]
 		public DateTime date { get; set; }
-		[Display(Name = "Doctor Email")]
+		[Required, Display(Name = "Time")]
+		public string Time { get; set; }
+		[MaxLength(300)]
+		public string Detail { get; set; }
+		public bool Status { get; set; }
+		public string PateintName { get; set; }
 		public string DoctorEmail { get; set; }
-		[Display(Name = "Patient Email")]
 		public string PatientEmail { get; set; }
 		public string PatientID { get; set; }
-		public string ApDoctorId { get; set; }
-		[Display(Name = "Patient SSN")]
+		public string ApDocotorId { get; set; }
 		public long PatientSSN { get; set; }
 		public int DoctorId { get; set; }
-		public PrescriptionViewModel()
-		{
-			date = DateTime.Now;
-		}
 	}
 }

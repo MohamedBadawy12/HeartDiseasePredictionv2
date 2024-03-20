@@ -67,8 +67,7 @@
 							@foreach (var item in Model)
 							{
 								<tr>
-									<td class="align-middle text-center">
-										@item.Id
+									<td class="align-middle text-center counterColumn">
 									</td>
 									<td class="align-middle text-center">
 										@item.MedicineName
@@ -82,12 +81,12 @@
 											@item.Doctorr.FirstName @item.Doctorr.LastName
 										</td>
 									}
-									@if (User.Identity.IsAuthenticated && User.IsInRole("Doctor"))
+								@*	@if (User.Identity.IsAuthenticated && User.IsInRole("Doctor"))
 									{
 										<td class="align-middle text-center">
 											@item.Patientt.FirstName @item.Patientt.LastName
 										</td>
-									}
+									}*@
 									<td class="align-middle text-center">
 										@item.PatientSSN
 									</td>
@@ -114,4 +113,11 @@
 			event.preventDefault();
 		}
 	}
+	document.addEventListener("DOMContentLoaded", function () {
+		var counterCells = document.querySelectorAll(".counterColumn");
+		var counter = 1;
+		counterCells.forEach(function (cell) {
+			cell.textContent = counter++;
+		});
+	});
 </script>

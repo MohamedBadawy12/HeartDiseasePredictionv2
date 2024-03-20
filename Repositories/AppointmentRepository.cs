@@ -52,86 +52,6 @@ namespace Repositories
 		}
 
 		/// <summary>
-		/// Get upcomming appointments for doctor - Admin section
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public async Task<IEnumerable<Appointment>> GetTodaysAppointments(int id)
-		{
-			DateTime today = DateTime.Now.Date;
-			return await _context.Appointments
-				.Where(d => d.DoctorId == id && d.date >= today)
-				.Include(p => p.Patient)
-				.OrderBy(d => d.date)
-				.ToListAsync();
-		}
-		/// <summary>
-		/// Get upcomming appointments for specific doctor
-		/// </summary>
-		/// <param name="userId"></param>
-		/// <returns></returns>
-		public async Task<IEnumerable<Appointment>> GetUpcommingAppointments(string userId)
-		{
-			DateTime today = DateTime.Now.Date;
-			return await _context.Appointments
-				.Where(d => d.Doctor.UserId == userId && d.date >= today && d.Status == true)
-				.Include(p => p.Patient)
-				.OrderBy(d => d.date)
-				.ToListAsync();
-		}
-
-		public IQueryable<Appointment> FilterAppointments(AppointmentSearchVM searchModel)
-		{
-			var result = _context.Appointments.Include(p => p.Patient).Include(d => d.Doctor).AsQueryable();
-			if (searchModel != null)
-			{
-				if (!string.IsNullOrWhiteSpace(searchModel.Name))
-					result = result.Where(a => a.Doctor.Name == searchModel.Name);
-				if (!string.IsNullOrWhiteSpace(searchModel.Option))
-				{
-					if (searchModel.Option == "ThisMonth")
-					{
-						result = result.Where(x => Convert.ToDateTime(x.date).Year == DateTime.Now.Year && Convert.ToDateTime(x.date).Month == DateTime.Now.Month);
-					}
-					else if (searchModel.Option == "Pending")
-					{
-						result = result.Where(x => x.Status == false);
-					}
-					else if (searchModel.Option == "Approved")
-					{
-						result = result.Where(x => x.Status);
-					}
-				}
-			}
-
-			return result;
-
-		}
-		/// <summary>
-		/// Get Daily appointments
-		/// </summary>
-		/// <param name="getDate"></param>
-		/// <returns></returns>
-		public async Task<IEnumerable<Appointment>> GetDaillyAppointments(DateTime getDate)
-		{
-			return await _context.Appointments
-				.Where(a => a.date != null && a.date.Date == getDate.Date)
-				.Include(p => p.Patient)
-				.Include(d => d.Doctor)
-				.ToListAsync();
-		}
-
-		/// <summary>
-		/// Validate appointment date and time
-		/// </summary>
-		/// <param name="appntDate"></param>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public async Task<bool> ValidateAppointment(DateTime appntDate, int id)
-		{
-			return await _context.Appointments.AnyAsync(a => a.date == appntDate && a.DoctorId == id);
-		}
-		/// <summary>
 		/// Get number of appointments for defined patient
 		/// </summary>
 		/// <param name="ssn"></param>
@@ -147,15 +67,101 @@ namespace Repositories
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<Appointment> GetAppointment(int id)
-		{
-			return await _context.Appointments.FindAsync(id);
-		}
+		public async Task<Appointment> GetAppointment(int id) =>
+			await _context.Appointments
+			.Include(d => d.Doctor)
+			.Include(p => p.Patientt)
+			.Include(P => P.Patient)
+			.FirstOrDefaultAsync(i => i.Id == id);
+
 
 		public async Task AddAsync(Appointment appointment)
 		{
 			await _context.Appointments.AddAsync(appointment);
 		}
 
+		public async Task AddAppointmentAsync(AppointmentViewModel model)
+		{
+			var appointment = new Appointment()
+			{
+				PatientID = model.PatientID,
+				DoctorEmail = model.DoctorEmail,
+				PatientEmail = model.PatientEmail,
+				PatientSSN = model.PatientSSN,
+				DoctorId = model.DoctorId,
+				date = model.date,
+				Time = model.Time,
+			};
+			await _context.Appointments.AddAsync(appointment);
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task<List<Appointment>> GetAppointmenByUserId(string userId, string userRole)
+		{
+			var appointments = await _context.Appointments/*.Include(n => n.Doctorr)*/
+				 .Include(p => p.Patientt)
+				 .Include(p => p.Doctor)
+				 .Include(p => p.Patient)
+				 .ToListAsync();
+			if (userRole == "User")
+			{
+				appointments = appointments.Where(n => n.PatientID == userId).ToList();
+			}
+			return appointments;
+		}
+
+		public async Task<List<Appointment>> GetAppointmenByEmail(string Email, string userRole)
+		{
+			var appointments = await _context.Appointments
+				.Include(p => p.Patientt)
+				.Include(p => p.Doctor)
+				.Include(p => p.Patient)
+				.ToListAsync();
+			if (userRole == "Doctor")
+			{
+				appointments = appointments.Where(n => n.DoctorEmail == Email).ToList();
+			}
+			if (userRole == "User")
+			{
+				appointments = appointments.Where(n => n.PatientEmail == Email).ToList();
+			}
+			return appointments;
+		}
+
+		public void Cancel(Appointment appointment) =>
+			_context.Appointments.Remove(appointment);
+
+		public Appointment Get_Appointment(int id) =>
+			 _context.Appointments
+			.Include(d => d.Doctor)
+			.Include(p => p.Patient)
+			.Include(P => P.Patientt)
+			.FirstOrDefault(i => i.Id == id);
+
+		public async Task AddMessageAsync(Message message) =>
+			await _context.Messages.AddAsync(message);
+
+		public async Task<List<Message>> GetMessageByUserId(string userId, string userRole)
+		{
+			var messages = await _context.Messages
+				 .Include(p => p.Doctor)
+				 .ToListAsync();
+			if (userRole == "Doctor")
+			{
+				messages = messages.Where(n => n.DoctorId == userId).ToList();
+			}
+			return messages;
+		}
+		public async Task<List<Message>> GetMessageByEmail(string Email, string userRole)
+		{
+			var messages = await _context.Messages
+				 .Include(p => p.Doctor)
+				 .ToListAsync();
+			if (userRole == "User")
+			{
+				messages = messages.Where(n => n.PatientEmail == Email).ToList();
+			}
+			return messages;
+		}
 	}
 }

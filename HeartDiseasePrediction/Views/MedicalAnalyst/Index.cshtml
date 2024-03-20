@@ -58,7 +58,7 @@
 								<th>Email</th>
 								<th>Lab</th>
 								@*<th>Gender</th>*@
-								@*<th>Age</th>*@
+								<th>Age</th>
 								@*<th>Phone</th>*@
 								<th>
 								</th>
@@ -79,8 +79,7 @@
 									@*<td class="align-middle text-center">
 							@item.Id
 							</td>*@
-									<td class="align-middle text-center">
-										@item.Id
+									<td class="align-middle text-center counterColumn">
 									</td>
 									<td class="align-middle text-center">
 										@item.User.FirstName
@@ -97,9 +96,9 @@
 									@*<td class="align-middle text-center">
 										@item.User.Gender
 									</td>*@
-									@*<td class="align-middle text-center">
+									<td class="align-middle text-center">
 										@item.User.Age
-									</td>*@
+									</td>
 									@*<td class="align-middle text-center">
 							@item.User.PhoneNumber
 							</td>*@
@@ -143,4 +142,11 @@
 			event.preventDefault();
 		}
 	}
+	document.addEventListener("DOMContentLoaded", function () {
+		var counterCells = document.querySelectorAll(".counterColumn");
+		var counter = 1;
+		counterCells.forEach(function (cell) {
+			cell.textContent = counter++;
+		});
+	});
 </script>

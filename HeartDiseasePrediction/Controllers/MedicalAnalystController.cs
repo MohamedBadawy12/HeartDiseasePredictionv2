@@ -55,6 +55,8 @@ namespace HeartDiseasePrediction.Controllers
                     Gender = medicalAnalyst.User.Gender,
                     PhoneNumber = medicalAnalyst.User.PhoneNumber,
                     ProfileImg = medicalAnalyst.User.ProfileImg,
+                    LabId = medicalAnalyst.LabId,
+                    LabName = medicalAnalyst.Lab.Name,
                 };
                 return View(medicalAnalystVM);
             }

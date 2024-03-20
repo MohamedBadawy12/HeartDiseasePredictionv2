@@ -52,19 +52,16 @@
 					<table class="table table-hover table-responsive table-striped" id="Patients">
 						<thead>
 							<tr class="text-center bg-dark text-light">
+								<th>#</th>
 								<th>SSN</th>
 								@*<th>InsuranceNo</th>*@
 								<th>Email</th>
 								<th>FirstName</th>
 								<th>LastName</th>
-								<th>Age</th>
+								@*<th>Age</th>*@
 								@*<th>Phone</th>*@
 								<th>
 								</th>
-								@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-							{
-							<th>Action</th>
-							}*@
 
 							</tr>
 						</thead>
@@ -75,6 +72,8 @@
 									@*<td class="align-middle text-center">
 							<img class="rounded-circle" src="@item.ProfileImg" alt="@item.FullName" style="max-width:150px">
 							</td>*@
+									<td class="align-middle text-center counterColumn">
+									</td>
 									<td class="align-middle text-center">
 										@item.SSN
 									</td>
@@ -90,9 +89,9 @@
 									<td class="align-middle text-center">
 										@item.User.LastName
 									</td>
-									<td class="align-middle text-center">
+									@*<td class="align-middle text-center">
 										@item.User.Age
-									</td>
+									</td>*@
 									@*<td class="align-middle text-center">
 										@item.User.PhoneNumber
 									</td>*@
@@ -101,14 +100,6 @@
 										<a class="btn btn-outline-info" asp-controller="Patient" asp-action="PatientDetails" asp-route-ssn="@item.SSN"><i class="fa fa-eye"></i> Details</a> |
 										<a class="btn btn-outline-danger " asp-controller="Patient" asp-action="DeletePatient" asp-route-ssn="@item.SSN" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
 									</td>
-									@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-							{
-							<td class="align-middle text-center">
-							<a class="btn btn-outline-primary" asp-controller="Patient" asp-action="Edit" asp-route-ssn="@item.SSN"><i class="fa fa-pencil-square"></i> Edit</a> |
-							<a class="btn btn-outline-info" asp-controller="Patient" asp-action="Details" asp-route-ssn="@item.SSN"><i class="fa fa-eye"></i> Details</a> |
-							<a class="btn btn-outline-danger " asp-controller="Patient" asp-action="Delete" aasp-route-ssn="@item.SSN" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
-							</td>
-							}*@
 								</tr>
 							}
 						</tbody>
@@ -118,14 +109,6 @@
 		</div>
 	</div>
 </section>
-@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-{
-	<div style="position:fixed; right:25px; bottom:65px;" class="text-white">
-		<a asp-controller="Actor" asp-action="Create" class="btn btn-success">
-			<i class="bi bi-plus-circle"></i> Add New
-		</a>
-	</div>
-}*@
 
 <script>
 	function ConfirmDelete() {
@@ -135,4 +118,11 @@
 			event.preventDefault();
 		}
 	}
+	document.addEventListener("DOMContentLoaded", function () {
+		var counterCells = document.querySelectorAll(".counterColumn");
+		var counter = 1;
+		counterCells.forEach(function (cell) {
+			cell.textContent = counter++;
+		});
+	});
 </script>

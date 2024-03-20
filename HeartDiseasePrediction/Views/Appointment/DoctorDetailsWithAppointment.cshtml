@@ -1,22 +1,23 @@
-﻿@model HeartDiseasePrediction.ViewModel.DoctorVM
+﻿
+@model HeartDiseasePrediction.ViewModel.DoctorVM
 
 @{
-	ViewData["Title"] = "Doctor Details";
+    ViewData["Title"] = "Doctor Details";
 }
 <style type="text/css">
-   /* body {
-        color: #000;
-        overflow-x: hidden;
-        height: 100%;
-        background-color: #C5CAE9 !important;
-        background-repeat: no-repeat;
-        padding: 0px !important;
-    }*/
+    /* body {
+            color: #000;
+            overflow-x: hidden;
+            height: 100%;
+            background-color: #C5CAE9 !important;
+            background-repeat: no-repeat;
+            padding: 0px !important;
+        }*/
 
     /*.container-fluid {
-        padding-top: 120px !important;
-        padding-bottom: 120px !important;
-    }*/
+            padding-top: 120px !important;
+            padding-bottom: 120px !important;
+        }*/
 
     .card {
         box-shadow: 0px 4px 8px 0px #7986CB;
@@ -27,8 +28,8 @@
         border: 1px solid #060 !important;
         border-radius: 10px;
         box-sizing: border-box;
-       /* background-color: white !important;
-        color: #fff !important;*/
+        /* background-color: white !important;
+            color: #fff !important;*/
         font-size: 16px;
         letter-spacing: 1px;
         width: 180px;
@@ -93,13 +94,15 @@
         }
 
     /*.active {
-        border-radius: 6px !important;
-        background-image: linear-gradient(#90CAF9, #64B5F6) !important;
-        color: #000 !important;
-    }*/
+            border-radius: 6px !important;
+            background-image: linear-gradient(#90CAF9, #64B5F6) !important;
+            color: #000 !important;
+        }*/
 
     .disabled {
-        color: #616161 !important;
+        color: white !important;
+        background-color: red;
+        pointer-events: none;
     }
 
     .prev, .next, .datepicker-switch {
@@ -126,9 +129,11 @@
             border: 1px solid #3D5AFE;
         }
 
-      .cell.select {
-            background-color: #3D5AFE;
+        .cell.select {
+           /* background-color: #3D5AFE;*/
             color: #fff;
+            background-color: limegreen;
+            cursor: not-allowed;
         }
 
     .fa-calendar {
@@ -139,10 +144,28 @@
         cursor: pointer;
     }
 
-    .fa-envelope-o{
+    .fa-envelope-o {
         padding-top: 10px;
         padding-left: 5px;
     }
+
+    /*.time-slot {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 20px;
+        background-color: lightgray;
+        border: 1px solid #BDBDBD;
+        cursor: pointer;
+    }
+
+        .time-slot:hover{
+            border: 1px solid #3D5AFE;
+        }
+
+        .time-slot.disabled {
+            background-color: red;
+            cursor: not-allowed;
+        }*/
 
 </style>
 
@@ -157,11 +180,11 @@
         </nav>
     </div>
     <div class="container">
-        <div class="row align-items-center position-relative" >
+        <div class="row align-items-center position-relative">
             <div class="col-xl-3 col-lg-4">
                 <img src="~/images/doctor.png" width="100px" class="rounded-circle" alt="@Model.Name">
             </div>
-            <div class="col-xl-6 col-lg-8" >
+            <div class="col-xl-6 col-lg-8">
                 <h2 style="color:royalblue"><strong>Doctor Details</strong></h2>
                 <h2>
                     @Model.FirstName @Model.LastName
@@ -169,13 +192,13 @@
                 <div class="d-flex flex-row align-items-center mb-3">
                     <div style="padding-right:10px">
                         @*<span class="badge bg-success text-white">AVAILABLE</span>*@
-                        @if (Model.IsAvailable!=true)
+                        @if (Model.IsAvailable != true)
                         {
-                        <span class="badge bg-success text-white">AVAILABLE</span>
+                            <span class="badge bg-success text-white">AVAILABLE</span>
                         }
                         else
                         {
-                        <span class="badge bg-danger text-white">Pending</span>
+                            <span class="badge bg-danger text-white">Pending</span>
                         }
                     </div>
                     <div style="padding-right:10px;">
@@ -204,7 +227,7 @@
                     </div>
                     <div style="padding-right:10px">
                         <i class="fa fa-calendar" aria-hidden="true" style="color:limegreen"></i>
-                        @Model.BirthDate.ToString("dd MMM yy")
+                        @Model.BirthDate.ToString("dd MMMM yyyy")
                     </div>
                     <div>
                         <i class="fa fa-envelope-o" aria-hidden="true"></i>
@@ -232,41 +255,40 @@
                             <div autocomplete="off">
                                 <div class="card-header bg-secondary">
                                     <div class="mx-0 mb-0 row justify-content-sm-center justify-content-start px-1">
-                                        <input type="text" id="dp1" class="datepicker" placeholder="Select Date" name="date" readonly><span class="fa fa-calendar"></span>
+                                        <input type="text" id="date" class="datepicker" placeholder="Select Date" name="date" readonly><span class="fa fa-calendar"></span>
                                     </div>
                                 </div>
                                 <div class="card-body p-3 p-sm-5">
                                     <div class="row text-center mx-0">
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">9:00AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">9:30AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">9:45AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">10:00AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">10:30AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">10:45AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2 "><div class="cell py-1" onclick="selectTimeSlot(this)">9:00AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">9:30AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">10:00AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">10:30AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">11:00AM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">11:30AM</div></div>
                                     </div>
                                     <div class="row text-center mx-0">
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">11:00AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">11:30AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">11:45AM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">12:00PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">12:30PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">12:45PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">12:00PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">12:30PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">1:00PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">1:30PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">2:00PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">2:30PM</div></div>
                                     </div>
                                     <div class="row text-center mx-0">
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">1:00PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">1:30PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">1:45PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">2:00PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">2:30PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">2:45PM</div></div>
-                                    </div>
-                                    <div class="row text-center mx-0">
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">3:00PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">3:30PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">4:15PM</div></div>
-                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1">5:00PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">3:00PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">3:30PM</div></div>
+                                        <div class="col-md-2 col-4 my-1 px-2"><div class="cell py-1" onclick="selectTimeSlot(this)">4:00PM</div></div>
                                     </div>
                                 </div>
+                            </div>
+                            @*<label for="date">Select Date:</label>
+                            <input type="date" id="date" onchange="updateTimeSlots()">
+                            <br>*@
+
+                            <!-- Time Slots -->
+                            <div id="time-slots-container">
+                                <!-- Timeslots will be dynamically added here -->
                             </div>
                         </div>
                         <div class="form-row" style="margin:20px 0px">
@@ -297,7 +319,6 @@
 </div>
 <script>
     $(document).ready(function () {
-
         $('.datepicker').datepicker({
             format: 'dd-mm-yyyy',
             autoclose: true,
@@ -308,6 +329,89 @@
             $('.cell').removeClass('select');
             $(this).addClass('select');
         });
-
     });
+
+    /*Define available time slots*/
+    //const timeSlots = ['9:00AM', '9:30AM', '10:00AM', '10:30AM', '11:00AM', '11:30AM', '12:00PM',
+    //    '12:30PM', '1:00PM', '1:30PM', '2:00PM', '2:30PM', '3:00PM'];
+
+    /* Function to generate time slots based on selected date*/
+    //function generateTimeSlots(date) {
+    //    const timeSlotsContainer = document.getElementsByClassName('.cell');
+    //    timeSlotsContainer.innerHTML = '';  /*Clear previous slots*/
+
+    //    const selectedDate = new Date(date);
+    //    const today = new Date();
+
+    //    /*Disable past dates*/
+    //    if (selectedDate < today) {
+    //        alert("Please select a future date.");
+    //        return;
+    //    }
+
+    //    cell.forEach(slot => {
+    //        const timeSlotElement = document.createElement('div');
+    //        timeSlotElement.classList.add('time-slot');
+    //        timeSlotElement.textContent = slot;
+    //        timeSlotElement.onclick = function () {
+    //            if (!timeSlotElement.classList.contains('disabled')) {
+    //                timeSlotElement.classList.add('disabled');
+    //            } else {
+    //                timeSlotElement.classList.remove('disabled');
+    //            }
+    //        };
+    //        timeSlotsContainer.appendChild(timeSlotElement);
+    //    });
+    //}
+
+   /* Function to update time slots when date changes*/
+    //function updateTimeSlots() {
+    //    const selectedDate = documentgetElementsByClassName('datepicker').value;
+    //    generateTimeSlots(selectedDate);
+    //}
+
+    /*Initial generation of time slots*/
+    //updateTimeSlots();
+
+
+    let selectedTimeSlots = {};
+
+    // Function to handle the selection of a time slot
+    function selectTimeSlot(element) {
+        const date = document.getElementById('date').value;
+        const timeSlot = element.textContent;
+
+        // Check if the time slot is already selected for the chosen date
+        if (!selectedTimeSlots[date]) {
+            selectedTimeSlots[date] = [];
+        }
+        if (selectedTimeSlots[date].includes(timeSlot)) {
+            // If already selected, deselect it
+            selectedTimeSlots[date] = selectedTimeSlots[date].filter(slot => slot !== timeSlot);
+            element.classList.remove('disabled');
+        } else {
+            // If not selected, select it
+            selectedTimeSlots[date].push(timeSlot);
+            element.classList.add('disabled');
+        }
+    }
+
+    // Function to handle date selection
+    document.getElementById('date').addEventListener('change', function () {
+        const date = this.value;
+
+        // Check if time slots are selected for this date
+        if (selectedTimeSlots[date]) {
+            // Disable already selected time slots for this date
+            const timeSlots = document.querySelectorAll('cell');
+            timeSlots.forEach(slot => {
+                if (selectedTimeSlots[date].includes(slot.textContent)) {
+                    slot.classList.add('disabled');
+                } else {
+                    slot.classList.remove('disabled');
+                }
+            });
+        }
+    });
+
 </script>

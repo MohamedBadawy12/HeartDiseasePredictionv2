@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HeartDiseasePrediction.ViewModel
 {
-    public class MedicalAnalystVM
+    public class BookAppointmentViewModel
     {
         public int Id { get; set; }
         [Display(Name = "First Name"), StringLength(100)]
@@ -20,15 +20,16 @@ namespace HeartDiseasePrediction.ViewModel
         [Required(ErrorMessage = "Phone Number Is Required")]
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
+        [Display(Name = "Location"), StringLength(100)]
+        public string? Location { get; set; }
+        [Display(Name = "Name"), StringLength(150)]
+        public string? Name { get; set; }
+        [Display(Name = "Price")]
+        public string? Price { get; set; }
+        public bool IsAvailable { get; set; }
         [Display(Name = "Birth Date")]
         [Required(ErrorMessage = "Birth Date Is Required")]
         public DateTime BirthDate { get; set; }
-
-        [Display(Name = "Lab")]
-        [Required(ErrorMessage = "Lab Is Required")]
-        public int LabId { get; set; }
-        [Display(Name = "Lab")]
-        public string LabName { get; set; }
         [Display(Name = "Email"), StringLength(200)]
         [Required(ErrorMessage = "Email Is Required")]
         public string Email { get; set; }
@@ -48,5 +49,17 @@ namespace HeartDiseasePrediction.ViewModel
             }
             return age;
         }
+        [Required, Display(Name = "Date")]
+        public DateTime Date { get; set; }
+        [Required, Display(Name = "Time")]
+        public string Time { get; set; }
+        public string PatientPhone { get; set; }
+        public string PateintName { get; set; }
+        public string DoctorEmail { get; set; }
+        public string PatientEmail { get; set; }
+        public string PatientID { get; set; }
+        public string ApDocotorId { get; set; }
+        public long PatientSSN { get; set; }
+        public int DoctorId { get; set; }
     }
 }

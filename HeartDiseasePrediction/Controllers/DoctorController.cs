@@ -144,6 +144,9 @@ namespace HeartDiseasePrediction.Controllers
                 doctor.User.FirstName = model.FirstName;
                 doctor.User.LastName = model.LastName;
                 doctor.User.BirthDate = model.BirthDate;
+                doctor.User.Name = model.Name;
+                doctor.User.Location = model.Location;
+                doctor.User.Price = model.Price;
                 doctor.User.Gender = model.Gender;
                 doctor.Name = model.Name;
                 doctor.Location = model.Location;
