@@ -1,105 +1,99 @@
 ﻿using Database.Entities;
-using HeartDiseasePrediction.ViewModel;
+using HearPrediction.Api.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NToastNotify;
 using Repositories;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace HeartDiseasePrediction.Controllers
+namespace HearPrediction.Api.Controllers
 {
-	public class AppointmentController : Controller
+	[Route("api/[controller]")]
+	[ApiController]
+	public class AppointmentController : ControllerBase
 	{
 		private readonly IUnitOfWork _unitOfWork;
-		private readonly IToastNotification _toastNotification;
-
-		public AppointmentController(IUnitOfWork unitOfWork, IToastNotification toastNotification)
+		private readonly UserManager<ApplicationUser> _userManager;
+		public AppointmentController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
 		{
 			_unitOfWork = unitOfWork;
-			_toastNotification = toastNotification;
+			_userManager = userManager;
 		}
 
 		//Get All Appointments by User ID
 		[Authorize(Roles = "User")]
+		[HttpGet()]
 		public async Task<IActionResult> Index()
 		{
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (userName == null)
+				return BadRequest("Register Or Login Please");
+			var user = await _userManager.FindByNameAsync(userName);
+			string userId = user.Id;
 			string userRole = User.FindFirstValue(ClaimTypes.Role);
 			var appointments = await _unitOfWork.appointments.GetAppointmenByUserId(userId, userRole);
-			return View(appointments);
+			return Ok(appointments);
 		}
 
 		//Get All Appointments by Email
 		[Authorize(Roles = "Doctor")]
+		[HttpGet("GetAppointmentByEmail")]
 		public async Task<IActionResult> GetAppointmentByEmail()
 		{
 			string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
 			string userRole = User.FindFirstValue(ClaimTypes.Role);
 			var appointments = await _unitOfWork.appointments.GetAppointmenByEmail(doctorEmail, userRole);
-			return View(appointments);
+			return Ok(appointments);
 		}
 
 		//Get All Appointments by User ID
 		[Authorize(Roles = "Doctor")]
+		[HttpGet("GetMessageByUserId")]
 		public async Task<IActionResult> GetMessageById()
 		{
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (userName == null)
+				return BadRequest("Register Or Login Please");
+			var user = await _userManager.FindByNameAsync(userName);
+			string userId = user.Id;
 			string userRole = User.FindFirstValue(ClaimTypes.Role);
 			var messages = await _unitOfWork.appointments.GetMessageByUserId(userId, userRole);
-			return View(messages);
+			return Ok(messages);
 		}
 
 		//Get All Appointments by Email
 		[Authorize(Roles = "User")]
+		[HttpGet("GetMessagetByEmail")]
 		public async Task<IActionResult> GetMessagetByEmail()
 		{
 			string patientEmail = User.FindFirstValue(ClaimTypes.Email);
 			string userRole = User.FindFirstValue(ClaimTypes.Role);
 			var messages = await _unitOfWork.appointments.GetMessageByEmail(patientEmail, userRole);
-			return View(messages);
+			return Ok(messages);
 		}
 
 		//Create Appointment
-		public async Task<IActionResult> Create(int id)
-		{
-			var doctor = await _unitOfWork.Doctors.GetDoctor(id);
-			if (doctor == null)
-				return View("NotFound");
-			var DoctorDetail = new BookAppointmentViewModel
-			{
-				FirstName = doctor.User.FirstName,
-				LastName = doctor.User.LastName,
-				BirthDate = doctor.User.BirthDate,
-				Email = doctor.User.Email,
-				Gender = doctor.User.Gender,
-				PhoneNumber = doctor.User.PhoneNumber,
-				Name = doctor.Name,
-				Location = doctor.Location,
-				Price = doctor.Price,
-				//ProfileImg = doctor.User.ProfileImg,
-			};
-			return View(DoctorDetail);
-		}
 		[Authorize(Roles = "User")]
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(int id, BookAppointmentViewModel model)
+		[HttpPost("BookAppointment")]
+		public async Task<IActionResult> Create(int id, BookAppointmentDto model)
 		{
 			var doctor = await _unitOfWork.Doctors.GetDoctor(id);
 			if (doctor == null)
-				return View("NotFound");
+				return BadRequest("NotFound");
 
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (userName == null)
+				return BadRequest("Register Or Login Please");
+			var user = await _userManager.FindByNameAsync(userName);
+			string userId = user.Id;
 			string patientEmail = User.FindFirstValue(ClaimTypes.Email);
-			model.PatientID = userId;
-			model.PatientEmail = patientEmail;
 			var appointment = new Appointment()
 			{
-				PatientID = model.PatientID,
+				PatientID = userId,
 				PateintName = model.PateintName,
-				PatientEmail = model.PatientEmail,
+				PatientEmail = patientEmail,
 				DoctorEmail = doctor.User.Email,
 				date = model.Date,
 				Time = model.Time,
@@ -110,50 +104,54 @@ namespace HeartDiseasePrediction.Controllers
 
 			await _unitOfWork.appointments.AddAsync(appointment);
 			await _unitOfWork.Complete();
-			_toastNotification.AddSuccessToastMessage("Appointment Created Successfully");
-			return View("CompletedSuccessfully");
+			return Ok("Appointment Created Successfully");
 		}
 
 		//Accept Appointment
 		[Authorize(Roles = "Doctor")]
-		public async Task<IActionResult> AcceptsAppointment(int id, MessageViewModel model)
+		[HttpPost("Accept")]
+		public async Task<IActionResult> AcceptsAppointment(int id)
 		{
 			var appointment = await _unitOfWork.appointments.GetAppointment(id);
 			if (appointment == null)
-				return View("NotFound");
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				return BadRequest("NotFound");
+			string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (userName == null)
+				return BadRequest("Register Or Login Please");
+			var user = await _userManager.FindByNameAsync(userName);
+			string userId = user.Id;
 			string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
-			model.DoctorId = userId;
-			model.DoctorEmail = doctorEmail;
 			var message = new Message
 			{
 				Messages = "Your Appointment is Accepted",
-				Date = model.Date,
+				Date = DateTime.Now,
 				PatientEmail = appointment.PatientEmail,
 				DoctorEmail = doctorEmail,
 				DoctorId = userId,
 			};
 			await _unitOfWork.appointments.AddMessageAsync(message);
 			await _unitOfWork.Complete();
-			_toastNotification.AddSuccessToastMessage($"Message has sent successfully");
-			return RedirectToAction("Index");
+			return Ok(message);
 		}
 
-		//Cancel Appointment
+		//Cancel Appointment by Doctor
 		[Authorize(Roles = "Doctor")]
-		public async Task<IActionResult> CancelAppointment(int id, MessageViewModel model)
+		[HttpPost("CancelByDoctor")]
+		public async Task<IActionResult> CancelAppointment(int id)
 		{
 			var appointment = _unitOfWork.appointments.Get_Appointment(id);
 			if (appointment != null)
 			{
-				string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (userName == null)
+					return BadRequest("Register Or Login Please");
+				var user = await _userManager.FindByNameAsync(userName);
+				string userId = user.Id;
 				string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
-				model.DoctorId = userId;
-				model.DoctorEmail = doctorEmail;
 				var message = new Message
 				{
 					Messages = "Sorry,Your Appointment is Canceled because Doctor is busy in this time",
-					Date = model.Date,
+					Date = DateTime.Now,
 					PatientEmail = appointment.PatientEmail,
 					DoctorEmail = doctorEmail,
 					DoctorId = userId,
@@ -162,14 +160,15 @@ namespace HeartDiseasePrediction.Controllers
 				await _unitOfWork.Complete();
 				_unitOfWork.appointments.Cancel(appointment);
 				await _unitOfWork.Complete();
-				_toastNotification.AddSuccessToastMessage($"Appointment with ID {id} Is Canceled");
+				return Ok(message);
 			}
-			return RedirectToAction("GetAppointmentByEmail");
+			return BadRequest($"Appointment with {id} is Not Found");
 		}
 
 		//Cancel Appointment by Patient
 		[Authorize(Roles = "User")]
-		public async Task<IActionResult> Cancel(int id)
+		[HttpDelete("CancelByPatient")]
+		public async Task<IActionResult> CancelAppointmentByPatient(int id)
 		{
 			var appointment = _unitOfWork.appointments.Get_Appointment(id);
 			if (appointment == null)
@@ -177,38 +176,7 @@ namespace HeartDiseasePrediction.Controllers
 
 			_unitOfWork.appointments.Cancel(appointment);
 			await _unitOfWork.Complete();
-			_toastNotification.AddSuccessToastMessage($"Appointment with ID {id} Is Canceled");
-			return RedirectToAction("Index");
+			return Ok(appointment);
 		}
-		public async Task<IActionResult> DoctorDetailsWithAppointment(int id)
-		{
-			try
-			{
-				var doctor = await _unitOfWork.Doctors.GetDoctor(id);
-				if (doctor == null)
-					return View("NotFound");
-
-				var DoctorDetail = new DoctorVM
-				{
-					FirstName = doctor.User.FirstName,
-					LastName = doctor.User.LastName,
-					BirthDate = doctor.User.BirthDate,
-					Email = doctor.User.Email,
-					Gender = doctor.User.Gender,
-					PhoneNumber = doctor.User.PhoneNumber,
-					Name = doctor.Name,
-					Location = doctor.Location,
-					Price = doctor.Price,
-					//ProfileImg = doctor.User.ProfileImg,
-				};
-				return View(DoctorDetail);
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
-		}
-
 	}
 }

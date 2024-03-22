@@ -12,11 +12,10 @@ namespace Repositories.ViewModel
 		public string DoctorEmail { get; set; }
 		[Display(Name = "Patient Email")]
 		public string PatientEmail { get; set; }
-		public string PatientID { get; set; }
 		public string ApDoctorId { get; set; }
 		[Display(Name = "Patient SSN")]
 		public long PatientSSN { get; set; }
-		public int DoctorId { get; set; }
+		public int? DoctorId { get; set; }
 		public PrescriptionViewModel()
 		{
 			date = DateTime.Now;

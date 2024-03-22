@@ -68,19 +68,6 @@ namespace HearPrediction.Api.Controllers
 			}
 		}
 
-		//Get Patient's Appointment details
-		//[HttpGet("GetPatientApp")]
-		//public async Task<IActionResult> GetPatientAppDetails(long ssn)
-		//{
-		//	var patientDetailApp = new UserDetailDTO
-		//	{
-		//		Patient = await _unitOfWork.Patients.GetPatient(ssn),
-		//		Appointments = await _unitOfWork.appointment.GetAppointmentWithPatientAsync(ssn),
-		//		CountAppointments = await _unitOfWork.appointment.CountAppointments(ssn)
-		//	};
-		//	return Ok(patientDetailApp);
-		//}
-
 		//Edit Patient 
 		[HttpPut("EditPatient")]
 		public async Task<IActionResult> EditPatient(long ssn, [FromBody] UserFormDTO model)
@@ -108,7 +95,7 @@ namespace HearPrediction.Api.Controllers
 			patient.User.FirstName = model.FirstName;
 			patient.User.Email = model.Email;
 			patient.User.LastName = model.LastName;
-			patient.User.Gender = (Database.Enums.Gender)model.Gender;
+			patient.User.Gender = model.Gender;
 			patient.User.BirthDate = model.BirthDate;
 			patient.User.ProfileImg = model.ProfileImg;
 

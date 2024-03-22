@@ -27,13 +27,14 @@ namespace HearPrediction.Api.DTO
 		[Display(Name = "Lab")]
 		[Required(ErrorMessage = "Lab Is Required")]
 		public int LabId { get; set; }
+		public string labName { get; set; }
 		[Display(Name = "Email"), StringLength(200)]
 		[Required(ErrorMessage = "Email Is Required")]
 		public string Email { get; set; }
 		[Display(Name = "Profile Image")]
-		public string ProfileImg { get; set; }
+		public string? ProfileImg { get; set; }
 		[NotMapped]
 		[Display(Name = "Upload File")]
-		public IFormFile ImageFile { get; set; }
+		public IFormFile? ImageFile { get; set; }
 	}
 }

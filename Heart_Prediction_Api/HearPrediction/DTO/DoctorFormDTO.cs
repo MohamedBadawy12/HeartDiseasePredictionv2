@@ -23,11 +23,17 @@ namespace HearPrediction.Api.DTO
 		[Display(Name = "Birth Date")]
 		[Required(ErrorMessage = "Birth Date Is Required")]
 		public DateTime BirthDate { get; set; }
+		[Display(Name = "Location"), StringLength(100)]
+		public string? Location { get; set; }
+		[Display(Name = "Name"), StringLength(150)]
+		public string? Name { get; set; }
+		[Display(Name = "Price")]
+		public string? Price { get; set; }
 		[Display(Name = "Email"), StringLength(200)]
 		[Required(ErrorMessage = "Email Is Required")]
 		public string Email { get; set; }
 		[Display(Name = "Profile Image")]
-		public string ProfileImg { get; set; }
+		public string? ProfileImg { get; set; }
 		[NotMapped]
 		[Display(Name = "Upload File")]
 		public IFormFile? ImageFile { get; set; }

@@ -90,7 +90,7 @@
 									@if (User.Identity.IsAuthenticated && User.IsInRole("User"))
 									{
 										<td class="align-middle text-center">
-											<a class="btn btn-outline-danger" asp-controller="Appointment" asp-action="CancelAppointment" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+											<a class="btn btn-outline-danger" asp-controller="Appointment" asp-action="Cancel" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
 										</td>
 									}
 								</tr>

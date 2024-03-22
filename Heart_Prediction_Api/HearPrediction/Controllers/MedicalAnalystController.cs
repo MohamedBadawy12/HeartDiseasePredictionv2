@@ -56,6 +56,7 @@ namespace HearPrediction.Api.Controllers
 				Gender = medicalAnalyst.User.Gender,
 				ProfileImg = medicalAnalyst.User.ProfileImg,
 				LabId = medicalAnalyst.LabId,
+				labName = medicalAnalyst.Lab.Name,
 			};
 			return Ok(medicalAnalystDetail);
 		}
@@ -98,7 +99,7 @@ namespace HearPrediction.Api.Controllers
 			medicalAnalyst.User.FirstName = model.FirstName;
 			medicalAnalyst.User.LastName = model.LastName;
 			medicalAnalyst.User.BirthDate = model.BirthDate;
-			medicalAnalyst.User.Gender = (Database.Enums.Gender)model.Gender;
+			medicalAnalyst.User.Gender = model.Gender;
 			medicalAnalyst.User.ProfileImg = model.ProfileImg;
 			medicalAnalyst.LabId = model.LabId;
 
