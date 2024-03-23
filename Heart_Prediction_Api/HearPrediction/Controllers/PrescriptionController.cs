@@ -50,13 +50,13 @@ namespace HearPrediction.Api.Controllers
 		}
 
 		//Get Prescription from db
-		[HttpGet("id")]
-		[AllowAnonymous]
-		public async Task<IActionResult> GetPrescription(int id)
-		{
-			var result = await _unitOfWork.prescriptions.GetPrescription(id);
-			return Ok(result);
-		}
+		//[HttpGet("id")]
+		//[AllowAnonymous]
+		//public async Task<IActionResult> GetPrescription(int id)
+		//{
+		//	var result = await _unitOfWork.prescriptions.GetPrescription(id);
+		//	return Ok(result);
+		//}
 
 		//Get Details of Prescription by id from db
 		[HttpGet("GetPrescriptionById")]
@@ -82,16 +82,6 @@ namespace HearPrediction.Api.Controllers
 			return Ok(PrescriptionrDetail);
 		}
 
-		//Get Prescription of Patient by ssn from db
-		//[HttpGet("GetPrescriptionByPatientSSN")]
-		//public async Task<IActionResult> GetPrescriptionofPatient(long ssn)
-		//{
-		//	var prescription = await _unitOfWork.prescriptions.GetPrescriptionsByUserSSN(ssn);
-		//	if (prescription == null)
-		//		return NotFound($"No prescription with SSN was found with Id: {ssn}");
-
-		//	return Ok(prescription);
-		//}
 
 		//Search for Prescription
 		[HttpGet("Search")]
