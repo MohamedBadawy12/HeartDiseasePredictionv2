@@ -90,7 +90,7 @@
 									@if (User.Identity.IsAuthenticated && User.IsInRole("User"))
 									{
 										<td class="align-middle text-center">
-											<a class="btn btn-outline-danger" asp-controller="Appointment" asp-action="Cancel" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
+											<a href="javascript:;" class="btn btn-danger rounded rounded-3 js-delete" data-id="@item.Id"><i class="fa fa-times" aria-hidden="true"></i> Cancel</a>
 										</td>
 									}
 								</tr>
@@ -102,19 +102,64 @@
 		</div>
 	</div>
 </section>
-<script>
-	function ConfirmDelete() {
-		document.getElementById("");
-		var accept = confirm("Are You Sure to Cancel this Appointment?");
-		if (accept == false) {
-			event.preventDefault();
-		}
+@section Scripts{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-	document.addEventListener("DOMContentLoaded", function () {
-		var counterCells = document.querySelectorAll(".counterColumn");
-		var counter = 1;
-		counterCells.forEach(function (cell) {
-			cell.textContent = counter++;
+	<script>
+		$(document).ready(function () {
+			$('.js-delete').on('click', function () {
+				var btn = $(this);
+
+				const swal = Swal.mixin({
+					customClass: {
+						confirmButton: 'btn btn-danger mx-2',
+						cancelButton: 'btn btn-light'
+					},
+					buttonsStyling: false
+				});
+
+				swal.fire({
+					title: 'Are you sure that you need to cancel this appointment?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Yes, cancel it!',
+					cancelButtonText: 'No',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							url: `/Appointment/Canceled/${btn.data('id')}`,
+							method: 'DELETE',
+							success: function () {
+								swal.fire(
+									'Deleted!',
+									'Appointment has been canceled.',
+									'success'
+								);
+
+								btn.parents('tr').fadeOut();
+							},
+							error: function () {
+								swal.fire(
+									'Oooops...',
+									'Something went wrong.',
+									'error'
+								);
+							}
+						});
+					}
+				});
+			});
 		});
-	});
-</script>
+
+		document.addEventListener("DOMContentLoaded", function () {
+			var counterCells = document.querySelectorAll(".counterColumn");
+			var counter = 1;
+			counterCells.forEach(function (cell) {
+				cell.textContent = counter++;
+			});
+		});
+	</script>
+}

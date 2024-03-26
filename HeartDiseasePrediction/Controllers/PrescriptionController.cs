@@ -1,5 +1,6 @@
 ﻿using Database.Entities;
 using HeartDiseasePrediction.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +26,9 @@ namespace HeartDiseasePrediction.Controllers
 			_unitOfWork = unitOfWork;
 			_context = context;
 		}
+
 		//Get All Prescriptions By User ID
+		[Authorize(Roles = "Doctor")]
 		public async Task<IActionResult> Index()
 		{
 			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -33,7 +36,9 @@ namespace HeartDiseasePrediction.Controllers
 			var prescriptions = await _unitOfWork.prescriptions.GetPrescriptionByUserId(userId, userRole);
 			return View(prescriptions);
 		}
+
 		//Get All Prescriptions
+		[Authorize(Roles = "User")]
 		public async Task<IActionResult> GetPrescriptions()
 		{
 			string PatientEmail = User.FindFirstValue(ClaimTypes.Email);
@@ -50,6 +55,7 @@ namespace HeartDiseasePrediction.Controllers
 		}
 
 		//get Prescription details
+		[AllowAnonymous]
 		public async Task<IActionResult> PrescriptionDetails(int id)
 		{
 			try
@@ -79,12 +85,14 @@ namespace HeartDiseasePrediction.Controllers
 		}
 
 		//Create Prescriptions
+		[Authorize(Roles = "Doctor")]
 		public async Task<IActionResult> Create()
 		{
 			var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
 			ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
 			return View();
 		}
+		[Authorize(Roles = "Doctor")]
 		[HttpPost]
 		public async Task<IActionResult> Create(PrescriptionViewModel model)
 		{
@@ -112,6 +120,7 @@ namespace HeartDiseasePrediction.Controllers
 		}
 
 		//Edit details of Prescription
+		[Authorize(Roles = "Doctor")]
 		[HttpGet]
 		public async Task<IActionResult> Edit(int id)
 		{
@@ -128,14 +137,10 @@ namespace HeartDiseasePrediction.Controllers
 					PatientSSN = prescription.PatientSSN,
 					date = prescription.date,
 					ApDoctorId = prescription.ApDoctorId,
-					//PatientID = prescription.PatientID,
 					DoctorEmail = prescription.DoctorEmail,
 					PatientEmail = prescription.PatientEmail,
 					DoctorId = prescription.DoctorId,
-					//Doctor = prescription.Doctor,
 				};
-				//var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
-				//ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Email");
 				return View(prescriptionVM);
 			}
 			catch (Exception ex)
@@ -144,6 +149,7 @@ namespace HeartDiseasePrediction.Controllers
 				return View();
 			}
 		}
+		[Authorize(Roles = "Doctor")]
 		[HttpPost]
 		public async Task<IActionResult> Edit(int id, Prescription model)
 		{
@@ -153,12 +159,6 @@ namespace HeartDiseasePrediction.Controllers
 				if (prescription == null)
 					return View("NotFound");
 
-				//if (!ModelState.IsValid)
-				//{
-				//    var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
-				//    ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Email");
-				//    return View(model);
-				//}
 				var doctorDropDownList = await _unitOfWork.prescriptions.GetDoctorDropDownsValues();
 				ViewBag.Doctor = new SelectList(doctorDropDownList.doctors, "Id", "Name");
 				prescription.MedicineName = model.MedicineName;
@@ -184,17 +184,11 @@ namespace HeartDiseasePrediction.Controllers
 		}
 
 		//Delete Prescription 
-		public async Task<IActionResult> DeletePrescription(int id)
+		[Authorize(Roles = "Doctor")]
+		public IActionResult Delete(int id)
 		{
-			var prescription = _unitOfWork.prescriptions.Get_Prescription(id);
-			if (prescription != null)
-			{
-				//_prescriptionService.Remove(prescription);
-				_unitOfWork.prescriptions.Remove(prescription);
-				await _unitOfWork.Complete();
-				_toastNotification.AddSuccessToastMessage($"Prescription with ID {id} removed successfully");
-			}
-			return RedirectToAction("Index");
+			var isDeleted = _unitOfWork.prescriptions.Delete(id);
+			return isDeleted ? Ok() : BadRequest();
 		}
 	}
 }

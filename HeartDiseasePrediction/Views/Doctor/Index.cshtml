@@ -54,11 +54,11 @@
 							<tr class="text-center bg-dark text-light">
 								<th>#</th>
 								@*<th>Doctor Name</th>*@
-								<th>FirstName</th>
-								<th>LastName</th>
+								<th>Name</th>
+								@*<th>LastName</th>*@
 								<th>Email</th>
-								@*<th>Gender</th>*@
-								<th>Age</th>
+								<th>Gender</th>
+								@*<th>Age</th>*@
 								<th>Phone</th>
 								<th></th>
 								@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -84,36 +84,28 @@
 										@item.Name
 									</td>*@
 									<td class="align-middle text-center">
-										@item.User.FirstName
+										@item.User.FirstName @item.User.LastName
 									</td>
-									<td class="align-middle text-center">
+									@*<td class="align-middle text-center">
 										@item.User.LastName
-									</td>
+									</td>*@
 									<td class="align-middle text-center">
 										@item.User.Email
 									</td>
-									@*<td class="align-middle text-center">
-										@item.User.Gender
-									</td>*@
 									<td class="align-middle text-center">
-										@item.User.Age
+										@item.User.Gender
 									</td>
+									@*<td class="align-middle text-center">
+										@item.User.Age
+									</td>*@
 									<td class="align-middle text-center">
 										@item.User.PhoneNumber
 									</td>
 									<td class="align-middle text-center">
 										<a class="btn btn-outline-primary" asp-controller="Doctor" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
 										<a class="btn btn-outline-info" asp-controller="Doctor" asp-action="DoctorDetails" asp-route-id="@item.Id"><i class="fa fa-eye"></i> Details</a> |
-										<a class="btn btn-outline-danger " asp-controller="Doctor" asp-action="DeleteDoctor" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
+										<a href="javascript:;" class="btn btn-outline-danger rounded rounded-3 js-delete" data-id="@item.Id"><i class="fa fa-trash"></i> Delete</a>
 									</td>
-									@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-							{
-							<td class="align-middle text-center">
-							<a class="btn btn-outline-primary" asp-controller="Doctor" asp-action="Edit" asp-route-id="Id"><i class="fa fa-pencil-square"></i> Edit</a> |
-							<a class="btn btn-outline-info" asp-controller="Doctor" asp-action="Details" asp-route-id="Id"><i class="fa fa-eye"></i> Details</a> |
-							<a class="btn btn-outline-danger " asp-controller="Doctor" asp-action="Delete" asp-route-id="Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
-							</td>
-							}*@
 								</tr>
 							}
 						</tbody>
@@ -123,37 +115,66 @@
 		</div>
 	</div>
 </section>
-@*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-{
-	<div style="position:fixed; right:25px; bottom:65px;" class="text-white">
-		<a asp-controller="Actor" asp-action="Create" class="btn btn-success">
-			<i class="bi bi-plus-circle"></i> Add New
-		</a>
-	</div>
-}*@
 
-@*@section scripts{
-	<script>
-		$(document).ready(function){
-			toastr.error("test")
-		}
-	</script>
-}*@
-
-<script>
-
-	function ConfirmDelete() {
-		document.getElementById("");
-		var accept = confirm("Are You Sure to delete this Doctor?");
-		if (accept == false) {
-			event.preventDefault();
-		}
+@section Scripts{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-	document.addEventListener("DOMContentLoaded", function () {
-		var counterCells = document.querySelectorAll(".counterColumn");
-		var counter = 1;
-		counterCells.forEach(function (cell) {
-			cell.textContent = counter++;
+	<script>
+		$(document).ready(function () {
+			$('.js-delete').on('click', function () {
+				var btn = $(this);
+
+				const swal = Swal.mixin({
+					customClass: {
+						confirmButton: 'btn btn-danger mx-2',
+						cancelButton: 'btn btn-light'
+					},
+					buttonsStyling: false
+				});
+
+				swal.fire({
+					title: 'Are you sure that you need to delete this doctor?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Yes, delete it!',
+					cancelButtonText: 'No, cancel!',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							url: `/Doctor/Delete/${btn.data('id')}`,
+							method: 'DELETE',
+							success: function () {
+								swal.fire(
+									'Deleted!',
+									'Docotr has been deleted.',
+									'success'
+								);
+
+								btn.parents('tr').fadeOut();
+							},
+							error: function () {
+								swal.fire(
+									'Oooops...',
+									'Something went wrong.',
+									'error'
+								);
+							}
+						});
+					}
+				});
+			});
 		});
-	});
-</script>
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+			var counterCells = document.querySelectorAll(".counterColumn");
+			var counter = 1;
+			counterCells.forEach(function (cell) {
+				cell.textContent = counter++;
+			});
+		});
+	</script>
+}

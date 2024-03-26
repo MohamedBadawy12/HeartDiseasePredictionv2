@@ -73,8 +73,8 @@
 									</td>
 									<td class="align-middle text-center">
 										<a class="btn btn-outline-primary" asp-controller="Lab" asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-pencil-square"></i> Edit</a> |
-										<a class="btn btn-outline-info" asp-controller="Lab" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> Details</a> |
-										<a class="btn btn-outline-danger " asp-controller="Lab" asp-action="Delete" asp-route-id="@item.Id" onclick="ConfirmDelete()"><i class="fa fa-trash"></i> Delete</a>
+										<a class="btn btn-outline-info" asp-controller="Lab" asp-action="Details" asp-route-id="@item.Id"><i class="fa fa-eye"></i> Details</a> |		
+										<a href="javascript:;" class="btn btn-outline-danger rounded rounded-3 js-delete" data-id="@item.Id"><i class="fa fa-trash"></i> Delete</a>
 									</td>
 								</tr>
 							}
@@ -85,19 +85,64 @@
 		</div>
 	</div>
 </section>
-<script>
-	function ConfirmDelete() {
-		document.getElementById("");
-		var accept = confirm("Are You Sure to delete this Lab?");
-		if (accept == false) {
-			event.preventDefault();
-		}
-	} 
-	document.addEventListener("DOMContentLoaded", function () {
-		var counterCells = document.querySelectorAll(".counterColumn");
-		var counter = 1;
-		counterCells.forEach(function (cell) {
-			cell.textContent = counter++;
+@section Scripts{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	<script>
+		$(document).ready(function () {
+			$('.js-delete').on('click', function () {
+				var btn = $(this);
+
+				const swal = Swal.mixin({
+					customClass: {
+						confirmButton: 'btn btn-danger mx-2',
+						cancelButton: 'btn btn-light'
+					},
+					buttonsStyling: false
+				});
+
+				swal.fire({
+					title: 'Are you sure that you need to delete this lab?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Yes, delete it!',
+					cancelButtonText: 'No, cancel!',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							url: `/Lab/DeleteLab/${btn.data('id')}`,
+							method: 'DELETE',
+							success: function () {
+								swal.fire(
+									'Deleted!',
+									'Lab has been deleted.',
+									'success'
+								);
+
+								btn.parents('tr').fadeOut();
+							},
+							error: function () {
+								swal.fire(
+									'Oooops...',
+									'Something went wrong.',
+									'error'
+								);
+							}
+						});
+					}
+				});
+			});
 		});
-	});
-</script>
+
+		document.addEventListener("DOMContentLoaded", function () {
+			var counterCells = document.querySelectorAll(".counterColumn");
+			var counter = 1;
+			counterCells.forEach(function (cell) {
+				cell.textContent = counter++;
+			});
+		});
+	</script>
+}

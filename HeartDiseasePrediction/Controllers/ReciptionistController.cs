@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 using Repositories;
+using Repositories.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -14,12 +15,14 @@ namespace HeartDiseasePrediction.Controllers
 		private readonly IToastNotification _toastNotification;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly AppDbContext _context;
+		private readonly IFileRepository _fileRepository;
 		private readonly IWebHostEnvironment _webHostEnvironment;
 		public ReciptionistController(IToastNotification toastNotification
-			, AppDbContext context, IUnitOfWork unitOfWork)
+			, AppDbContext context, IUnitOfWork unitOfWork, IFileRepository fileRepository)
 		{
 			_toastNotification = toastNotification;
 			_unitOfWork = unitOfWork;
+			_fileRepository = fileRepository;
 			_context = context;
 		}
 		//get all Reciptionists in list
@@ -131,27 +134,10 @@ namespace HeartDiseasePrediction.Controllers
 		}
 
 		//Delete Reciptionist 
-		public async Task<IActionResult> DeleteReciptionist(int id)
+		public IActionResult Delete(int id)
 		{
-			var reciptionsit = await _unitOfWork.reciptionists.GetReciptionist(id);
-			if (reciptionsit == null)
-				return View("NotFound");
-			//var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Upload", reciptionsit.User.ProfileImg);
-			try
-			{
-				//if (System.IO.File.Exists(imagePath))
-				//    System.IO.File.Delete(imagePath);
-				//_reciptionistService.Remove(reciptionsit);
-				_unitOfWork.reciptionists.Remove(reciptionsit);
-				await _unitOfWork.Complete();
-				_toastNotification.AddSuccessToastMessage($"Reciptionsit with ID {id} removed successfully");
-				return RedirectToAction("Index");
-			}
-			catch (Exception ex)
-			{
-				TempData["errorMessage"] = ex.Message;
-				return View();
-			}
+			var isDeleted = _unitOfWork.reciptionists.Delete(id);
+			return isDeleted ? Ok() : BadRequest();
 		}
 	}
 }

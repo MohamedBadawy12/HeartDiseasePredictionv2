@@ -66,5 +66,30 @@ namespace Repositories
 
         public Doctor FindDoctor(int id) =>
              _context.Doctors.Find(id);
+
+        public bool DeleteDoctor(int id)
+        {
+            var isDeleted = false;
+
+            var doctor = _context.Doctors
+               .Include(d => d.User)
+               .Include(d => d.Appointments)
+               .Include(d => d.Patients)
+               .Include(d => d.prescriptions)
+               .FirstOrDefault(d => d.Id == id);
+
+            if (doctor is null)
+                return isDeleted;
+
+            _context.Remove(doctor);
+            var effectedRows = _context.SaveChanges();
+
+            if (effectedRows > 0)
+            {
+                isDeleted = true;
+            }
+
+            return isDeleted;
+        }
     }
 }

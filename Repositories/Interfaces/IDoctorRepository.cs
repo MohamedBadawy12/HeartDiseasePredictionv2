@@ -15,5 +15,6 @@ namespace Repositories.Interfaces
         Task<Doctor> GetProfile(string userId);
         Task Add(Doctor doctor);
         void Delete(Doctor doctor);
+        bool DeleteDoctor(int id);
     }
 }

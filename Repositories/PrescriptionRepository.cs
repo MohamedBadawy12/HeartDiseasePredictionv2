@@ -43,7 +43,6 @@ namespace Repositories
         public async Task<List<Prescription>> GetPrescriptionByUserId(string userId, string userRole)
         {
             var Prescriptions = await _context.Prescriptions.Include(n => n.Doctorr)
-                //.Include(p => p.Patientt)
                 .Include(p => p.Doctor)
                 .Include(p => p.Patient)
                 .ToListAsync();
@@ -76,7 +75,6 @@ namespace Repositories
             .Include(d => d.Doctor)
             .Include(p => p.Patient)
             .Include(D => D.Doctorr)
-            //.Include(P => P.Patientt)
             .FirstOrDefault(i => i.Id == id);
 
         public void Remove(Prescription prescription) =>
@@ -101,7 +99,6 @@ namespace Repositories
         public async Task<List<Prescription>> GetPrescriptionByEmail(string Email, string userRole)
         {
             var Prescriptions = await _context.Prescriptions.Include(n => n.Doctorr)
-                //.Include(p => p.Patientt)
                 .Include(p => p.Doctor)
                 .Include(p => p.Patient)
                 .ToListAsync();
@@ -114,6 +111,30 @@ namespace Repositories
                 Prescriptions = Prescriptions.Where(n => n.PatientEmail == Email).ToList();
             }
             return Prescriptions;
+        }
+
+        public bool Delete(int id)
+        {
+            var isDeleted = false;
+
+            var prescription = _context.Prescriptions
+            .Include(d => d.Doctor)
+            .Include(p => p.Patient)
+            .Include(D => D.Doctorr)
+            .FirstOrDefault(i => i.Id == id);
+
+            if (prescription is null)
+                return isDeleted;
+
+            _context.Remove(prescription);
+            var effectedRows = _context.SaveChanges();
+
+            if (effectedRows > 0)
+            {
+                isDeleted = true;
+            }
+
+            return isDeleted;
         }
     }
 }

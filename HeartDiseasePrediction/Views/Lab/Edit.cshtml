@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="btn-box">
-                        <button type="submit" class="btn ">Save</button>
+                        <button id="btnAlertMessage" type="submit" class="btn ">Save</button>
                     </div>
                 </form>
             </div>
@@ -40,4 +40,24 @@
 </section>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        //$(document).ready(function () {
+        //    $("#btnAlertMessage").click(function () {
+        //        Swal.fire({
+        //            title: "Do you want to save the changes?",
+        //            showDenyButton: true,
+        //            showCancelButton: true,
+        //            confirmButtonText: "Save",
+        //            //denyButtonText: `Don't save`
+        //        }).then((result) => {
+        //            /* Read more about isConfirmed, isDenied below */
+        //            if (result.isConfirmed) {
+        //                Swal.fire("Saved!", "", "success");
+        //            } else if (result.isDenied) {
+        //                Swal.fire("Changes are not saved", "", "info");
+        //            }
+        //        });
+        //    });
+        //});
+    </script>
 }

@@ -115,7 +115,7 @@ namespace HearPrediction.Api.Controllers
 			{
 				//if (System.IO.File.Exists(imagePath))
 				//	System.IO.File.Delete(imagePath);
-				_unitOfWork.Patients.Remove(patient);
+				_unitOfWork.Patients.Deleted(patient);
 				await _unitOfWork.Complete();
 				return Ok(patient);
 			}

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 using Repositories;
+using Repositories.Interfaces;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,7 +16,8 @@ namespace HeartDiseasePrediction.Controllers
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IToastNotification _toastNotification;
 
-		public AppointmentController(IUnitOfWork unitOfWork, IToastNotification toastNotification)
+		public AppointmentController(IUnitOfWork unitOfWork, IToastNotification toastNotification,
+			IFileRepository fileRepository)
 		{
 			_unitOfWork = unitOfWork;
 			_toastNotification = toastNotification;
@@ -128,7 +130,7 @@ namespace HeartDiseasePrediction.Controllers
 			var message = new Message
 			{
 				Messages = "Your Appointment is Accepted",
-				Date = model.Date,
+				Date = DateTime.Now,
 				PatientEmail = appointment.PatientEmail,
 				DoctorEmail = doctorEmail,
 				DoctorId = userId,
@@ -139,47 +141,39 @@ namespace HeartDiseasePrediction.Controllers
 			return RedirectToAction("Index");
 		}
 
-		//Cancel Appointment
+		//Cancel Appointment by doctor
 		[Authorize(Roles = "Doctor")]
-		public async Task<IActionResult> CancelAppointment(int id, MessageViewModel model)
+		public async Task<IActionResult> CanceledAppointment(int id, MessageViewModel model)
 		{
 			var appointment = _unitOfWork.appointments.Get_Appointment(id);
-			if (appointment != null)
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
+			model.DoctorId = userId;
+			model.DoctorEmail = doctorEmail;
+			var message = new Message
 			{
-				string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				string doctorEmail = User.FindFirstValue(ClaimTypes.Email);
-				model.DoctorId = userId;
-				model.DoctorEmail = doctorEmail;
-				var message = new Message
-				{
-					Messages = "Sorry,Your Appointment is Canceled because Doctor is busy in this time",
-					Date = model.Date,
-					PatientEmail = appointment.PatientEmail,
-					DoctorEmail = doctorEmail,
-					DoctorId = userId,
-				};
-				await _unitOfWork.appointments.AddMessageAsync(message);
-				await _unitOfWork.Complete();
-				_unitOfWork.appointments.Cancel(appointment);
-				await _unitOfWork.Complete();
-				_toastNotification.AddSuccessToastMessage($"Appointment with ID {id} Is Canceled");
-			}
-			return RedirectToAction("GetAppointmentByEmail");
-		}
-
-		//Cancel Appointment by Patient
-		[Authorize(Roles = "User")]
-		public async Task<IActionResult> Cancel(int id)
-		{
-			var appointment = _unitOfWork.appointments.Get_Appointment(id);
-			if (appointment == null)
-				return BadRequest($"Appointment with {id} is Not Found");
-
-			_unitOfWork.appointments.Cancel(appointment);
+				Messages = "Sorry,Your Appointment is Canceled because Doctor is busy in this time",
+				Date = model.Date,
+				PatientEmail = appointment.PatientEmail,
+				DoctorEmail = doctorEmail,
+				DoctorId = userId,
+			};
+			await _unitOfWork.appointments.AddMessageAsync(message);
 			await _unitOfWork.Complete();
-			_toastNotification.AddSuccessToastMessage($"Appointment with ID {id} Is Canceled");
-			return RedirectToAction("Index");
+			var isDeleted = _unitOfWork.appointments.Canceled(id);
+			return isDeleted ? Ok() : BadRequest();
 		}
+
+		//Cancel appointment by user
+		[Authorize(Roles = "User")]
+		public IActionResult Canceled(int id)
+		{
+			var isDeleted = _unitOfWork.appointments.Canceled(id);
+			return isDeleted ? Ok() : BadRequest();
+		}
+
+
+		[Authorize(Roles = "User")]
 		public async Task<IActionResult> DoctorDetailsWithAppointment(int id)
 		{
 			try

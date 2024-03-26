@@ -30,5 +30,24 @@ namespace Repositories
         }
 
         public Lab Get_Lab(int id) => _context.Labs.FirstOrDefault(l => l.Id == id);
+        public bool DeleteLab(int id)
+        {
+            var isDeleted = false;
+
+            var lab = _context.Labs.Find(id);
+
+            if (lab is null)
+                return isDeleted;
+
+            _context.Remove(lab);
+            var effectedRows = _context.SaveChanges();
+
+            if (effectedRows > 0)
+            {
+                isDeleted = true;
+            }
+
+            return isDeleted;
+        }
     }
 }

@@ -55,7 +55,7 @@
 		Hello @(User.FindFirst("UserFirstName").Value + " " + User.FindFirst("UserLastName").Value)
 	</a>
 		<span style="padding-left:10px"></span>
-	<a asp-controller="Account" asp-action="Logout" onclick="ConfirmLogout()">
+	<a id="confirmBtn" class="js-logout" asp-controller="Account" asp-action="Logout" onclick="ConfirmLogout()">
 		<i class="fa fa-sign-out" aria-hidden="true"></i>
 		<span>
 			Log Out
@@ -81,6 +81,30 @@ else
 }
 
 <script>
+	document.getElementById('confirmBtn').addEventListener('click', function () {
+		bootbox.confirm({
+			message: 'Are You Sure to Log Out?',
+			buttons: {
+				confirm: {
+					label: 'Yes',
+					className: 'btn-danger'
+				},
+				cancel: {
+					label: 'No',
+					className: 'btn-outline-secondary'
+				}
+			},
+			callback: function (result) {
+				if (result) {
+					console.log('User clicked Yes');
+					// Perform action if user clicks Yes
+				} else {
+					console.log('User clicked No');
+					// Perform action if user clicks No or closes the dialog
+				}
+			}
+		});
+	});
 	function ConfirmLogout() {
 		document.getElementsByClassName("");
 		var accept = confirm("Are You Sure to Log Out?");
@@ -88,4 +112,30 @@ else
 			event.preventDefault();
 		}
 	}
+	
+
+	//document.getElementById('confirmBtn').addEventListener('click', function () {
+	//	bootbox.confirm({
+	//		message: 'Are You Sure to Log Out?',
+	//		buttons: {
+	//			confirm: {
+	//				label: 'Yes',
+	//				className: 'btn-danger'
+	//			},
+	//			cancel: {
+	//				label: 'No',
+	//				className: 'btn-outline-secondary'
+	//			}
+	//		},
+	//		callback: function (result) {
+	//			if (result) {
+	//				console.log('User clicked Yes');
+	//				// Perform action if user clicks Yes
+	//			} else {
+	//				console.log('User clicked No');
+	//				// Perform action if user clicks No or closes the dialog
+	//			}
+	//		}
+	//	});
+	//});
 </script>

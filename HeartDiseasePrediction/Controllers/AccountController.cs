@@ -10,6 +10,7 @@ using Repositories;
 using Repositories.Interfaces;
 using System;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -405,145 +406,142 @@ namespace HeartDiseasePrediction.Controllers
         {
             return View();
         }
-
-
-        //public string Email { get; set; }
-        //[BindProperty]
-        //public EditAccountProfile Input { get; set; }
-        //private async Task LoadAsync(ApplicationUser user)
-        //{
-        //    var email = await _userManager.GetEmailAsync(user);
-        //    var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-        //    Email = email;
-
-        //    Input = new EditAccountProfile
-        //    {
-        //        PhoneNumber = phoneNumber,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Gender = user.Gender,
-        //        BirthDate = user.BirthDate,
-        //        ProfileImg = user.ProfileImg
-        //    };
-        //}
-        [HttpGet]
-        public async Task<IActionResult> UpdateProfile(string userId)
+        [AllowAnonymous]
+        public async Task<IActionResult> Update()
         {
-            EditAccountProfile model = new EditAccountProfile();
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
+            var userId = _userManager.GetUserId(HttpContext.User);
+            if (userId == null)
+                return View("Login");
+            var user = _userManager.FindByIdAsync(userId).Result;
+            return View(user);
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Update(ApplicationUser model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+                return NotFound();
+
+            user.Id = model.Id;
+            user.PhoneNumber = model.PhoneNumber;
+            user.UserName = model.UserName;
+            user.PasswordHash = model.PasswordHash;
+            user.Email = model.Email;
+            user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+            user.BirthDate = model.BirthDate;
+            user.EmailConfirmed = model.EmailConfirmed;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Name = model.Name;
+            user.Gender = model.Gender;
+            user.ConcurrencyStamp = model.ConcurrencyStamp;
+            user.SSN = model.SSN;
+            user.ImageFile = model.ImageFile;
+            user.ProfileImg = model.ProfileImg;
+            user.Price = model.Price;
+            user.LockoutEnd = model.LockoutEnd;
+            user.LockoutEnabled = model.LockoutEnabled;
+            user.NormalizedUserName = model.NormalizedUserName;
+            user.Location = model.Location;
+            user.Insurance_No = model.Insurance_No;
+            user.NormalizedEmail = model.NormalizedEmail;
+            user.SecurityStamp = model.SecurityStamp;
+            user.TwoFactorEnabled = model.TwoFactorEnabled;
+
+            var result = await _userManager.UpdateAsync(model);
+            if (result.Succeeded)
             {
-                model.UserId = user.Id;
-                model.Email = user.Email;
-                model.FirstName = user.FirstName;
-                model.LastName = user.LastName;
-                model.PhoneNumber = user.PhoneNumber;
-                model.BirthDate = user.BirthDate;
-                model.Gender = user.Gender;
-                model.ProfileImg = user.ProfileImg;
+                _toastNotification.AddSuccessToastMessage("Account Updated Successfully");
+                return RedirectToAction("Update");
             }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateProfile()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return BadRequest("Register Or Login Please");
+            var user = await _userManager.FindByIdAsync(userId);
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            var model = new ApplicationUser
+            {
+                Id = userId,
+                Email = email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Name = user.Name,
+                Gender = user.Gender,
+                PhoneNumber = user.PhoneNumber,
+                ProfileImg = user.ProfileImg,
+                Insurance_No = user.Insurance_No,
+                SSN = user.SSN,
+                Location = user.Location,
+                Price = user.Price,
+                BirthDate = user.BirthDate,
+            };
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile(string userId, EditAccountProfile model)
+        public async Task<IActionResult> UpdateProfile(EditAccountProfile model)
         {
-            if (ModelState.IsValid)
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return BadRequest("Register Or Login Please");
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
+            //_fileRepository.SaveImage(model.ImageFile);
+            var userModel = new ApplicationUser
             {
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user.Email != model.Email)
-                    user.Email = model.Email;
-                if (user.FirstName != model.FirstName)
-                    user.FirstName = model.FirstName;
-                if (user.LastName != model.LastName)
-                    user.LastName = model.LastName;
-                if (user.PhoneNumber != model.PhoneNumber)
-                    user.PhoneNumber = model.PhoneNumber;
-                if (user.BirthDate != model.BirthDate)
-                    user.BirthDate = model.BirthDate;
-                if (user.Gender != model.Gender)
-                    user.Gender = model.Gender;
-                if (user.ImageFile != null)
-                {
-                    var file = _fileRepository.SaveImage(user.ImageFile);
-                    if (file.Item1 == 1)
-                    {
-                        var oldImage = user.ProfileImg;
-                        user.ProfileImg = file.Item2;
-                        await _userManager.UpdateAsync(user);
-                        var deleteResult = _fileRepository.DeleteImage(oldImage);
-                    }
-                }
-
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-
-            }
-            return View(model);
+                Id = userId,
+                Email = email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Name = model.Name,
+                PhoneNumber = model.PhoneNumber,
+                SSN = model.SSN,
+                Insurance_No = model.Insurance_No,
+                BirthDate = model.BirthDate,
+                Gender = model.Gender,
+                Location = model.Location,
+                Price = model.Price,
+                ProfileImg = model.ProfileImg,
+            };
+            //if (userRole == "User")
+            //{
+            //    var users = new Patient
+            //    {
+            //        UserId = userId,
+            //        SSN = model.SSN,
+            //        Insurance_No = model.Insurance_No
+            //    };
+            //}
+            //if (userRole == "Doctor")
+            //{
+            //    var users = new Doctor
+            //    {
+            //        UserId = userId,
+            //        Price = model.Price,
+            //        Name = model.Name,
+            //        Location = model.Location,
+            //    };
+            //}
+            _context.Users.Update(userModel);
+            await _unitOfWork.Complete();
+            //_context.Patients.Update(users);
+            //await _unitOfWork.Complete();
+            _toastNotification.AddSuccessToastMessage("Account Updated Successfully");
+            return View(userModel);
         }
-        //[HttpGet]
-        //public async Task<IActionResult> EditAccount(string id)
-        //{
-        //    if (!string.IsNullOrEmpty(id))
-        //    {
-        //        ApplicationUser user = await _userManager.FindByIdAsync(id);
-        //        if (user != null)
-        //        {
-        //            var model = new EditAccountProfile
-        //            {
-        //                Id = user.Id,
-        //                FirstName = user.FirstName,
-        //                LastName = user.LastName,
-        //                Gender = user.Gender,
-        //                BirthDate = user.BirthDate,
-        //                Email = user.Email,
-        //                PhoneNumber = user.PhoneNumber,
-        //                Password = user.PasswordHash,
-        //                ConfirmPassword = user.PasswordHash
-        //            };
-        //            return View(model);
-        //        }
-        //    }
-        //    return RedirectToAction("Index", "Doctors");
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> EditAccount(EditAccountProfile model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _userManager.FindByIdAsync(model.Id);
-        //        if (user != null)
-        //        {
-        //            user.FirstName = model.FirstName;
-        //            user.LastName = model.LastName;
-        //            user.Gender = model.Gender;
-        //            user.BirthDate = model.BirthDate;
-        //            user.Email = model.Email;
-        //            user.PhoneNumber = model.PhoneNumber;
-        //            var passwordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
-        //            user.PasswordHash = passwordHash;
-        //        }
-        //        var result = await _userManager.UpdateAsync(user);
-        //        if (result.Succeeded)
-        //        {
-        //            _toastNotification.AddSuccessToastMessage("Account Updated successfully.");
-        //            return View("EditAccount");
-        //        }
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-        //        return View(model);
-        //    }
-        //    return View(model);
-        //}
+
         public IActionResult AccessDenied()
         {
             return View();

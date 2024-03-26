@@ -11,5 +11,6 @@ namespace Repositories.Interfaces
         Task<NewLabDropDownViewMode> GetLabDropDownsValues();
         Task AddAsync(Lab lab);
         void Delete(Lab lab);
+        bool DeleteLab(int id);
     }
 }

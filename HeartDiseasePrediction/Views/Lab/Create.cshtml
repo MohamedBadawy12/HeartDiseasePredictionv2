@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="btn-box">
-                        <button type="submit" class="btn ">Save</button>
+                        <button id="btnAlertMessage" type="submit" class="btn ">Save</button>
                     </div>
                 </form>
             </div>
@@ -35,5 +35,18 @@
     </div>
 </section>
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+   <script>
+        //$(document).ready(function () {
+        //	$("#btnAlertMessage").click(function () {
+        //        Swal.fire({
+        //            title: "Success",
+        //            text: "Lab is created",
+        //            icon: "success"
+        //        });
+        //	});
+        //});
+   </script>
 }

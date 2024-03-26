@@ -11,6 +11,8 @@ namespace Repositories.Interfaces
 		Task<Patient> GetProfile(string userId);
 		Patient Get_Patient(long ssn);
 		Task Add(Patient patient);
-		void Remove(Patient patient);
+		void Deleted(Patient patient);
+		bool Delete(long ssn);
+
 	}
 }

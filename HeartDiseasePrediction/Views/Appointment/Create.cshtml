@@ -160,7 +160,15 @@
     <div class="container">
         <div class="row align-items-center position-relative">
             <div class="col-xl-3 col-lg-4">
-                <img src="~/images/doctor.png" width="100px" class="rounded-circle" alt="@Model.Name">
+                @if (Model.ProfileImg == null)
+                {
+                    <img src="~/images/doctor.png" width="100px" class="rounded-circle" alt="@Model.Name">
+                }
+                else
+                {
+                    <img src="@("~/Upload/"+Model.ProfileImg)" alt="Doctor" class="rounded-circle" width="150">
+                }
+                @*<img src="~/images/doctor.png" width="100px" class="rounded-circle" alt="@Model.Name">*@
             </div>
             <div class="col-xl-6 col-lg-8">
                 <h2 style="color:royalblue"><strong>Doctor Details</strong></h2>
@@ -314,10 +322,20 @@
     </div>
 </div>
 <script>
+    //$(document).ready(function () {
+    //    $("#btnAlertMessage").click(function () {
+    //        Swal.fire({
+    //            title: "Success",
+    //            text: "Lab is created",
+    //            icon: "success",
+    //            timer:2000
+    //        });
+    //    });
+    //});
     $(document).ready(function () {
 
         $('.datepicker').datepicker({
-            format: 'dd-mm-yyyy',
+            format: 'dd/mm/yyyy',
             autoclose: true,
             startDate: '0d'
         });

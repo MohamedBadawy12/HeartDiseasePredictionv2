@@ -53,5 +53,27 @@ namespace Repositories
             }
             return reciptionists;
         }
+
+        public bool Delete(int id)
+        {
+            var isDeleted = false;
+
+            var reciptionist = _context.Reciptionists
+                 .Include(m => m.User)
+                 .FirstOrDefault(m => m.Id == id);
+
+            if (reciptionist is null)
+                return isDeleted;
+
+            _context.Remove(reciptionist);
+            var effectedRows = _context.SaveChanges();
+
+            if (effectedRows > 0)
+            {
+                isDeleted = true;
+            }
+
+            return isDeleted;
+        }
     }
 }

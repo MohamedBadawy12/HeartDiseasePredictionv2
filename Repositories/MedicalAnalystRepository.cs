@@ -61,5 +61,29 @@ namespace Repositories
             }
             return medicalAnalysts;
         }
+
+        public bool Delete(int id)
+        {
+            var isDeleted = false;
+
+            var medicalAnalyst = _context.MedicalAnalysts
+                 .Include(m => m.User)
+                 .Include(m => m.Lab)
+                 .Include(m => m.medicalTests)
+                 .FirstOrDefault(m => m.Id == id);
+
+            if (medicalAnalyst is null)
+                return isDeleted;
+
+            _context.Remove(medicalAnalyst);
+            var effectedRows = _context.SaveChanges();
+
+            if (effectedRows > 0)
+            {
+                isDeleted = true;
+            }
+
+            return isDeleted;
+        }
     }
 }
